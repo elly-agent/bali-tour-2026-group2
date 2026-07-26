@@ -874,6 +874,7 @@ function renderRouteMap(data) {
   const daysWrap = document.getElementById("route-map-days");
   const path = document.getElementById("route-map-path");
   const marker = document.getElementById("route-current-marker");
+  const snorkeler = document.getElementById("route-snorkeler");
   const label = document.getElementById("route-map-current-label");
   const pathLength = path.getTotalLength();
 
@@ -893,6 +894,9 @@ function renderRouteMap(data) {
     marker.style.top = (point.y / ROUTE_MAP_IMAGE_HEIGHT) * 100 + "%";
     marker.textContent = routeMap.legendIcons[dayInfo.transport].split(" ")[0];
     label.textContent = dayInfo.date + "　" + dayInfo.label;
+
+    // レンボンガン島でシュノーケルをする日（8/20）だけ、海に浮かぶ人を表示する
+    snorkeler.classList.toggle("hidden", dayInfo.date !== "2026-08-20");
 
     // 進行方向に合わせた回転は、向きが正しく見えている最終日（17日→18日）だけに適用する。
     // それ以外の日は、絵文字の向きがおかしく見えたため元の(回転なし)表示に戻す。
