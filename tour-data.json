@@ -366,12 +366,12 @@
     "description": "旅の道のりを地図で体験！日付を選ぶと、現在地が移動します。",
     "legendIcons": { "flight": "✈️ 飛行機", "car": "🚗 車", "ferry": "⛴️ フェリー" },
     "route": [
-      { "date": "2026-08-18", "label": "日本 → デンパサール", "place": "デンパサール", "transport": "flight" },
-      { "date": "2026-08-19", "label": "サヌール → レンボンガン島", "place": "レンボンガン島", "transport": "ferry" },
-      { "date": "2026-08-20", "label": "レンボンガン島周辺", "place": "レンボンガン島周辺", "transport": "car" },
-      { "date": "2026-08-21", "label": "レンボンガン島 → チュニガン島", "place": "チュニガン島", "transport": "car" },
-      { "date": "2026-08-22", "label": "チュニガン島 → ヌサドゥア", "place": "ヌサドゥア", "transport": "ferry" },
-      { "date": "2026-08-23", "label": "ヌサドゥア → 空港（車） → 日本", "place": "日本（帰国）", "transport": "flight" }
+      { "date": "2026-08-18", "label": "デンパサール空港 → サヌール", "place": "サヌール", "transport": "flight" },
+      { "date": "2026-08-19", "label": "サヌール → レンボンガン島（船）", "place": "レンボンガン島", "transport": "ferry" },
+      { "date": "2026-08-20", "label": "レンボンガン島（船で周辺へ）", "place": "レンボンガン島周辺", "transport": "ferry" },
+      { "date": "2026-08-21", "label": "レンボンガン島 → チュニガン島（船）", "place": "チュニガン島", "transport": "ferry" },
+      { "date": "2026-08-22", "label": "チュニガン島に滞在", "place": "チュニガン島", "transport": "car" },
+      { "date": "2026-08-23", "label": "チュニガン島 → ヌサドゥア → 空港（車） → 日本", "place": "日本（帰国）", "transport": "flight" }
     ]
   },
 
