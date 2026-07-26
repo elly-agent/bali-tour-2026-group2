@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BALI TOUR 2026 | 旅のしおり</title>
+<meta name="description" content="BALI TOUR 2026 参加者のための、体験型デジタル旅のしおりです。">
+
+<!--
+  ============================================================
+  このHTMLについて（初心者向けメモ）
+  ============================================================
+  ・旅行の日程、ホテル、グルメ、豆知識などの「内容」は
+    すべて tour-data.json というファイルの中に書かれています。
+  ・内容を変更したいときは、このHTMLファイルではなく
+    tour-data.json を書き換えてください。
+  ・このHTMLは「入れ物（骨組み）」だけを用意していて、
+    実際の文章や写真は script.js が tour-data.json を読み込んで
+    自動的に流し込む仕組みになっています。
+  ・class="..." で書かれている名前は style.css の見た目と
+    対応しています。
+  ============================================================
+-->
+
+<!-- 読みやすく高級感のあるフォントを読み込みます（見出し用・本文用） -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Serif+JP:wght@400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============================================================
+     ローディング画面（データや画像を読み込んでいる間に表示）
+     ============================================================ -->
+<div id="loading-screen" class="loading-screen">
+  <div class="loading-inner">
+    <p class="loading-logo">BALI TOUR 2026</p>
+    <div class="loading-bar"><div class="loading-bar-fill" id="loading-bar-fill"></div></div>
+    <p class="loading-text">旅の準備をしています…</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     サウンド要素（BGM・効果音）
+     BGMの選択肢は tour-data.json の bgmTracks で管理しています。
+     曲を追加・削除したいときは、この<audio>タグと bgmTracks の
+     両方に同じファイルパスで追記・削除してください。
+     ============================================================ -->
+<audio id="audio-seaside"                data-track-file="assets/audio/seaside.wav"                src="assets/audio/seaside.wav"                loop preload="none"></audio><audio id="audio-whispers-of-the-night"  data-track-file="assets/audio/whispers-of-the-night.mp3"  src="assets/audio/whispers-of-the-night.mp3"  loop preload="none"></audio>
+<audio id="audio-bali-tide-calm"         data-track-file="assets/audio/bali-tide-calm.mp3"         src="assets/audio/bali-tide-calm.mp3"         loop preload="none"></audio>
+<audio id="audio-tsuki-no-sunahama"      data-track-file="assets/audio/tsuki-no-sunahama.mp3"      src="assets/audio/tsuki-no-sunahama.mp3"      loop preload="none"></audio>
+<audio id="sfx-plane"     src="assets/audio/sfx-plane.mp3" preload="none"></audio>
+<audio id="sfx-flying"    src="assets/audio/sfx-flying.mp3" preload="none"></audio>
+
+<!-- ============================================================
+     オープニング演出（宇宙 → 地球 → 日本 → 飛行機 → バリ到着）
+     ============================================================ -->
+<div id="opening-screen" class="opening-screen">
+
+  <!-- 星空（JavaScriptでcanvasに星を描画します） -->
+  <canvas id="starfield" class="starfield"></canvas>
+
+  <!-- 雲の演出（オープニング後半・本編パララックスでも再利用） -->
+  <div class="opening-clouds" aria-hidden="true">
+    <div class="cloud cloud--a"></div>
+    <div class="cloud cloud--b"></div>
+    <div class="cloud cloud--c"></div>
+  </div>
+
+  <!-- 最初の一回だけのタップ画面：スマホのブラウザは操作(タップ)なしでは音を鳴らせないため、
+       ここでのタップを合図にBGM・効果音を鳴らし始めることで、演出と音のタイミングを合わせる -->
+  <div class="opening-tap-gate" id="opening-tap-gate">
+    <p class="opening-tap-gate-title">BALI TOUR 2026</p>
+    <button class="btn-primary" id="btn-tap-gate">タップして旅を始める</button>
+  </div>
+
+  <!-- 「Selamat Datang！」到着メッセージの場面で流れる流れ星の演出 -->
+  <div class="shooting-stars" id="shooting-stars" aria-hidden="true">
+    <div class="shooting-star-track t1"><span class="shooting-star"></span></div>
+    <div class="shooting-star-track t2"><span class="shooting-star"></span></div>
+    <div class="shooting-star-track t3"><span class="shooting-star"></span></div>
+  </div>
+
+  <div class="opening-stage">
+
+    <!-- ステップ1〜3で使う「地球」演出 -->
+    <div class="earth-scene" id="earth-scene">
+      <div class="earth-globe-stage">
+        <!-- 日本とバリ島を結ぶ航路ライン（地球の外側に弧を描き、海外旅行の距離感を演出） -->
+        <svg class="earth-route-svg" id="earth-route-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <path id="earth-route-path" class="earth-route-path" d="M 70,34 Q 64,-6 60,64" />
+        </svg>
+        <div class="earth-globe" id="earth-globe">
+          <div class="earth-globe-surface"></div>
+          <div class="earth-equator" aria-hidden="true"><span class="earth-equator-label">EQUATOR</span></div>
+          <div class="japan-glow" id="japan-glow" aria-hidden="true"></div>
+          <div class="bali-glow" id="bali-glow" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ステップ4で使う「飛行ルート」演出 -->
+    <div class="flight-scene" id="flight-scene">
+      <svg class="flight-svg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
+        <!-- 飛行ルートの線（日本 → シンガポール → デンパサール） -->
+        <path id="flight-path" class="flight-path"
+              d="M 150,120 Q 400,80 560,260 T 830,380" />
+        <!-- 経由地点のマーカー -->
+        <circle class="flight-dot" cx="150" cy="120" r="6"></circle>
+        <circle class="flight-dot" cx="560" cy="260" r="6"></circle>
+        <circle class="flight-dot" cx="830" cy="380" r="6"></circle>
+        <text class="flight-label" x="150" y="100">日本</text>
+        <text class="flight-label" x="560" y="245">シンガポール</text>
+        <text class="flight-label" x="830" y="410">デンパサール</text>
+      </svg>
+      <div class="plane-icon" id="plane-icon">✈️</div>
+    </div>
+
+    <!-- ステップの説明文（tour-data.json の opening.steps から自動表示） -->
+    <div class="opening-caption" id="opening-caption">
+      <p class="opening-caption-text" id="opening-caption-text"></p>
+      <p class="opening-caption-sub" id="opening-caption-sub"></p>
+    </div>
+
+    <!-- 到着メッセージ「Selamat Datang！」 -->
+    <div class="opening-arrival hidden" id="opening-arrival">
+      <h2 class="arrival-greeting" id="arrival-greeting"></h2>
+      <p class="arrival-sub" id="arrival-sub"></p>
+    </div>
+
+    <!-- タイトルロゴ表示 -->
+    <div class="opening-title hidden" id="opening-title">
+      <p class="opening-title-producer" id="opening-title-producer"></p>
+      <h1 class="opening-title-main" id="opening-title-main"></h1>
+      <p class="opening-title-sub" id="opening-title-sub"></p>
+      <p class="opening-title-sub2" id="opening-title-sub2"></p>
+      <button class="btn-primary" id="btn-start-experience">あなたの旅を開く</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     メイン体験（本編：チャプター1〜20＋エンディング）
+     ============================================================ -->
+<div id="app" class="app app-hidden">
+
+  <!-- 上部バー -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-logo">BALI TOUR 2026</span>
+    </div>
+    <div class="topbar-center">
+      <span id="current-chapter-label" class="current-chapter-label"></span>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="btn-home" title="ホーム">🏠</button>
+      <button class="icon-btn" id="btn-menu" title="チャプター一覧">☰</button>
+      <button class="icon-btn" id="btn-autoplay" title="自動再生 ON/OFF">▶️</button>
+      <div class="bgm-control">
+        <button class="icon-btn" id="btn-bgm" title="BGM ON/OFF">🎵</button>
+        <!-- BGM選択メニュー：曲を選ぶとその場で切り替わる -->
+        <div class="bgm-menu hidden" id="bgm-menu">
+          <button class="bgm-menu-onoff" id="bgm-menu-onoff">🎵 BGMを流す</button>
+          <div class="bgm-menu-divider"></div>
+          <p class="bgm-menu-label">曲を選ぶ</p>
+          <div class="bgm-track-list" id="bgm-track-list"></div>
+        </div>
+        <!-- 「曲を選べる」ことに気づいてもらうための、初回限定の吹き出しヒント -->
+        <div class="bgm-hint hidden" id="bgm-hint">🎵 タップして曲を選べます</div>
+      </div>
+      <button class="icon-btn" id="btn-fullscreen" title="フルスクリーン">⛶</button>
+    </div>
+  </header>
+
+  <!-- topbarのすぐ下、白い余白部分に常設する3つのショートカットボタン -->
+  <div class="shortcut-bar">
+    <button class="shortcut-pill shortcut-pill--bgm" id="btn-bgm-shortcut" type="button" title="BGMを変える">
+      <span class="shortcut-pill-icon">🎵</span>
+      <span class="shortcut-pill-text">BGM変更</span>
+    </button>
+    <button class="shortcut-pill shortcut-pill--today" id="btn-today-schedule" type="button" title="今日の予定を見る">
+      <span class="shortcut-pill-icon">📅</span>
+      <span class="shortcut-pill-text">今日の予定</span>
+    </button>
+    <button class="shortcut-pill shortcut-pill--weather" id="btn-weather-shortcut" type="button" title="天気・時間を見る">
+      <span class="shortcut-pill-icon">🌤️</span>
+      <span class="shortcut-pill-text">天気・時間</span>
+    </button>
+  </div>
+
+  <!-- 進捗バー -->
+  <div class="progress-bar">
+    <div id="progress-fill" class="progress-fill"></div>
+  </div>
+
+  <!-- スライド本体 -->
+  <main id="slides-viewport" class="slides-viewport">
+    <div id="slides-track" class="slides-track">
+
+      <!-- ============ Chapter 1: 旅のテーマ ============ -->
+      <section class="slide" data-chapter="1" data-type="theme" id="slide-1">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <div class="brand-mark reveal">
+            <img src="assets/images/opa-logo-mark.png" alt="OPA - One Point Advice" class="brand-mark-img">
+          </div>
+          <p class="chapter-eyebrow reveal">Chapter 01</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:theme-intro"></h2>
+          <div class="theme-message-blocks" id="theme-message-blocks"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 2: バリ島ってどこ？ ============ -->
+      <section class="slide" data-chapter="2" data-type="world-map" id="slide-2">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <div class="brand-mark reveal">
+            <img src="assets/images/opa-logo-mark.png" alt="OPA - One Point Advice" class="brand-mark-img">
+          </div>
+          <p class="chapter-eyebrow reveal">Chapter 02</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:map-intro"></h2>
+          <p class="chapter-lead reveal" data-bind="worldMap.description"></p>
+
+          <div class="world-map-visual reveal">
+            <div class="mini-globe" id="mini-globe">
+              <div class="mini-globe-surface"></div>
+              <div class="earth-equator" aria-hidden="true"></div>
+              <div class="bali-pin" aria-hidden="true">
+                <span class="bali-pin-dot"></span>
+                <span class="bali-pin-label">🌴 バリ島</span>
+              </div>
+            </div>
+            <ul class="route-points" id="route-points"></ul>
+          </div>
+
+          <p class="equator-note reveal">
+            <span class="equator-note-icon">🌐</span>
+            <span data-bind="worldMap.equatorNote"></span>
+          </p>
+
+          <div class="stat-cards reveal-group" id="world-map-stats">
+            <div class="stat-card reveal">
+              <span class="stat-icon">📏</span>
+              <span class="stat-label">日本からの距離</span>
+              <span class="stat-value" data-bind="worldMap.distanceKm"></span>
+            </div>
+            <div class="stat-card reveal">
+              <span class="stat-icon">🛫</span>
+              <span class="stat-label">飛行時間</span>
+              <span class="stat-value" data-bind="worldMap.flightHours"></span>
+            </div>
+            <div class="stat-card reveal">
+              <span class="stat-icon">🕒</span>
+              <span class="stat-label">時差</span>
+              <span class="stat-value" data-bind="worldMap.timeDifference"></span>
+            </div>
+          </div>
+
+          <!-- 現在時刻(日本/バリ)と天気予報。天気はOpen-Meteo(APIキー不要・無料)から取得します -->
+          <div class="live-info reveal" id="live-info">
+            <div class="live-clocks">
+              <div class="live-clock">
+                <span class="live-clock-flag">🇯🇵</span>
+                <span class="live-clock-label">日本時間</span>
+                <span class="live-clock-time js-clock-jp">--:--</span>
+              </div>
+              <div class="live-clock">
+                <span class="live-clock-flag">🇮🇩</span>
+                <span class="live-clock-label">バリ時間（現地）</span>
+                <span class="live-clock-time js-clock-bali">--:--</span>
+              </div>
+            </div>
+            <div class="live-weather js-live-weather">
+              <p class="live-weather-loading">バリの天気を取得中…</p>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 3: バリ島基本情報 ============ -->
+      <section class="slide" data-chapter="3" data-type="basic-info" id="slide-3">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 03</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:basic-info"></h2>
+          <div class="info-grid" id="basic-info-grid"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 4: 宗教 ============ -->
+      <section class="slide" data-chapter="4" data-type="story" id="slide-4">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 04</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:religion"></h2>
+          <div class="incense" aria-hidden="true">
+            <span class="incense-smoke s1"></span>
+            <span class="incense-smoke s2"></span>
+            <span class="incense-smoke s3"></span>
+          </div>
+          <div class="story-image reveal">
+            <img data-src="assets/images/temple.jpg" alt="お供え物を捧げる祈りのひととき" class="ph-img">
+          </div>
+          <div class="story-text" id="religion-text"></div>
+          <div class="keyword-chips" id="religion-keywords"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 5: バリの人々 ============ -->
+      <section class="slide" data-chapter="5" data-type="story" id="slide-5">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 05</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:people"></h2>
+          <div class="story-image reveal">
+            <img data-src="assets/images/bali-people.jpg" alt="バリの人々" class="ph-img">
+          </div>
+          <div class="story-text" id="people-text"></div>
+          <div class="keyword-chips" id="people-keywords"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 6: グルメ ============ -->
+      <section class="slide" data-chapter="6" data-type="gourmet" id="slide-6">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 06</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:gourmet"></h2>
+          <div class="gourmet-grid" id="gourmet-grid"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 7: バリの見どころ ============ -->
+      <section class="slide" data-chapter="7" data-type="spots" id="slide-7">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 07</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:spots"></h2>
+          <p class="chapter-lead reveal">旅先で出会う、主な名所・名物をご紹介します。</p>
+          <div class="spots-grid" id="spots-grid"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 8: フォトギャラリー ============ -->
+      <section class="slide" data-chapter="8" data-type="gallery" id="slide-8">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 08</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:gallery"></h2>
+          <div class="gallery-grid" id="gallery-grid"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 9: MAP ============ -->
+      <section class="slide" data-chapter="9" data-type="route-map" id="slide-9">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 09</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:map"></h2>
+          <p class="chapter-lead reveal" data-bind="routeMap.description"></p>
+
+          <div class="route-map-visual reveal">
+            <img src="assets/images/bali-map-illustrated.jpg" alt="バリ島イラストマップ" class="route-map-bg-image">
+            <!-- 実際の旅程に沿って、地図の上に移動ルートを重ねて表示する -->
+            <svg class="route-map-svg route-map-svg--overlay" viewBox="0 0 1536 1024" preserveAspectRatio="xMidYMid meet">
+              <!-- 移動ルート -->
+              <path id="route-map-path" class="route-map-path" d="M 735,805 L 780,325 L 820,425 L 1240,665 L 990,590 L 705,820" />
+
+              <!-- 訪れる順番を示す街のマーク（数字入り） -->
+              <g class="route-map-city-group">
+                <circle class="route-map-city" cx="735" cy="805" r="15"></circle>
+              </g>
+              <g class="route-map-city-group">
+                <circle class="route-map-city" cx="780" cy="325" r="15"></circle>
+              </g>
+              <g class="route-map-city-group">
+                <circle class="route-map-city" cx="820" cy="425" r="15"></circle>
+              </g>
+              <g class="route-map-city-group">
+                <circle class="route-map-city" cx="1240" cy="665" r="15"></circle>
+              </g>
+              <g class="route-map-city-group">
+                <circle class="route-map-city" cx="990" cy="590" r="15"></circle>
+              </g>
+              <g class="route-map-city-group">
+                <circle class="route-map-city" cx="705" cy="820" r="15"></circle>
+              </g>
+            </svg>
+            <div class="route-current-marker" id="route-current-marker">✈️</div>
+          </div>
+
+          <p class="route-days-hint hidden" id="route-days-hint">👆 ここを押してね！日付をタップすると地図の乗り物が動きます</p>
+          <div class="route-map-days" id="route-map-days"></div>
+          <p class="route-map-current-label" id="route-map-current-label"></p>
+          <div class="route-map-highlights" id="route-map-highlights"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 10: 旅行の流れ ============ -->
+      <section class="slide" data-chapter="10" data-type="itinerary" id="slide-10">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 10</p>
+          <div class="chapter-title-row reveal">
+            <h2 class="chapter-title" data-bind="chapterTitle:itinerary"></h2>
+            <button class="opa-daily-btn" id="btn-lucky-opa-itinerary" type="button">
+              <span class="opa-daily-btn-icon">🌈</span>
+              <span class="opa-daily-btn-text">今日のラッキーオパを見る</span>
+            </button>
+          </div>
+          <div class="itinerary-timeline" id="itinerary-timeline"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 11: ホテル紹介 ============ -->
+      <section class="slide" data-chapter="11" data-type="hotels" id="slide-11">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 11</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:hotels"></h2>
+          <div class="hotel-grid" id="hotel-grid"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 12: レストラン紹介 ============ -->
+      <section class="slide" data-chapter="12" data-type="restaurants" id="slide-12">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 12</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:restaurants"></h2>
+          <p class="chapter-lead reveal">旅の途中で立ち寄る予定のお店をご紹介します。</p>
+          <div class="restaurant-grid" id="restaurant-grid"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 13: 言語 ============ -->
+      <section class="slide" data-chapter="13" data-type="phrases" id="slide-13">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 13</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:language"></h2>
+          <p class="chapter-lead reveal">旅先で使える、かんたんなあいさつ集です。</p>
+          <div class="phrase-cards" id="phrase-cards"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 14: 通貨 ============ -->
+      <section class="slide" data-chapter="14" data-type="currency" id="slide-14">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 14</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:currency"></h2>
+          <p class="chapter-lead reveal" data-bind="currency.description"></p>
+
+          <div class="currency-calc currency-calc--primary reveal">
+            <label for="currency-calc-input">ルピア → 円 早見計算</label>
+            <div class="currency-calc-row">
+              <input type="number" id="currency-calc-input" placeholder="例：100000" min="0">
+              <span>ルピア ＝</span>
+              <span id="currency-calc-output" class="currency-calc-output">0 円</span>
+            </div>
+          </div>
+
+          <div class="story-image reveal">
+            <img data-src="assets/images/currency-rupiah.jpg" alt="インドネシア・ルピア紙幣" class="ph-img">
+          </div>
+          <p class="currency-photo-caption reveal" data-bind="currency.currencyPhotoCaption"></p>
+
+          <div class="currency-tip reveal" id="currency-tip"></div>
+
+          <table class="currency-table reveal" id="currency-table">
+            <thead><tr><th>日本円</th><th>ルピア（目安）</th></tr></thead>
+            <tbody id="currency-table-body"></tbody>
+          </table>
+
+          <div class="price-list reveal">
+            <p class="price-list-title">物価の目安</p>
+            <div class="price-list-grid" id="price-list-grid"></div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 15: 値切り文化 ============ -->
+      <section class="slide" data-chapter="15" data-type="bargain" id="slide-15">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 15</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:bargain"></h2>
+          <div class="story-image reveal">
+            <img data-src="assets/images/market.jpg" alt="バリの市場" class="ph-img">
+          </div>
+          <div class="bargain-bubbles" id="bargain-bubbles"></div>
+          <p class="bargain-comment reveal" id="bargain-comment"></p>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 16: 服装 ============ -->
+      <section class="slide" data-chapter="16" data-type="clothing" id="slide-16">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 16</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:clothing"></h2>
+          <div class="clothing-grid" id="clothing-grid"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 17: バリ豆知識 ============ -->
+      <section class="slide" data-chapter="17" data-type="trivia" id="slide-17">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 17</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:trivia"></h2>
+          <div class="trivia-card-wrap reveal">
+            <div class="trivia-card" id="trivia-card">
+              <p id="trivia-card-text"></p>
+            </div>
+            <button class="btn-secondary" id="btn-trivia-next">つぎの豆知識 →</button>
+          </div>
+
+          <h3 class="bali-story-title reveal">バリ物語</h3>
+          <div class="bali-story" id="bali-story"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 18: FAQ ============ -->
+      <section class="slide" data-chapter="18" data-type="faq" id="slide-18">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 18</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:faq"></h2>
+          <div class="faq-list" id="faq-list"></div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 19: 持ち物チェックリスト ============ -->
+      <section class="slide" data-chapter="19" data-type="checklist" id="slide-19">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <p class="chapter-eyebrow reveal">Chapter 19</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:packing"></h2>
+          <p class="chapter-lead reveal">チェックした内容は、この端末に自動保存されます。</p>
+          <div id="packing-checklist-groups"></div>
+          <p class="packing-tip reveal" id="packing-tip"></p>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ Chapter 20: SATORU会 公式LINE ============ -->
+      <section class="slide" data-chapter="20" data-type="line" id="slide-20">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group">
+          <div class="brand-mark reveal">
+            <img src="assets/images/opa-logo-mark.png" alt="OPA - One Point Advice" class="brand-mark-img">
+          </div>
+          <p class="chapter-eyebrow reveal">Chapter 20</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:line"></h2>
+          <p class="chapter-lead reveal" data-bind="lineChapter.lead"></p>
+
+          <div class="line-feature-card reveal">
+            <p class="line-feature-title" id="line-feature-title"></p>
+            <p class="line-feature-note" id="line-feature-note"></p>
+            <a class="btn-primary line-feature-link" id="line-feature-link" href="#" target="_blank" rel="noopener"></a>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <!-- ============ エンディング ============ -->
+      <section class="slide slide--ending" data-chapter="21" data-type="ending" id="slide-21">
+        <div class="slide-scroll">
+        <div class="ending-sun" aria-hidden="true"></div>
+        <div class="ending-plane" aria-hidden="true">✈️</div>
+        <div class="slide-inner reveal-group ending-inner">
+          <p class="ending-producer" id="ending-producer"></p>
+          <h2 class="ending-title" id="ending-title"></h2>
+          <p class="ending-message" id="ending-message"></p>
+          <p class="ending-sub" id="ending-sub"></p>
+          <button class="btn-primary" id="btn-replay">もう一度、最初から見る</button>
+        </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ラッキーオパのボタンを押した時に、画面にふわっとかかる透明感のある虹エフェクト -->
+  <div class="rainbow-overlay" id="rainbow-overlay" aria-hidden="true"></div>
+
+  <!-- 持ち物チェックが全部そろった時に表示する、お祝いポップアップ -->
+  <div class="checklist-complete-popup hidden" id="checklist-complete-popup">
+    <div class="checklist-complete-panel">
+      <p class="checklist-complete-emoji">🎉</p>
+      <p class="checklist-complete-title">おめでとう！</p>
+      <p class="checklist-complete-text">持ち物の準備、ばっちりです。<br>あとは旅立つだけ！</p>
+      <button class="btn-primary" id="btn-close-checklist-complete">とじる</button>
+    </div>
+  </div>
+
+  <!-- 天気・時間ポップアップ -->
+  <div class="weather-popup hidden" id="weather-popup">
+    <div class="weather-popup-panel">
+      <div class="weather-popup-header">
+        <span class="weather-popup-title">天気・時間</span>
+        <button class="icon-btn" id="btn-close-weather" title="閉じる">✕</button>
+      </div>
+      <div class="live-clocks">
+        <div class="live-clock">
+          <span class="live-clock-flag">🇯🇵</span>
+          <span class="live-clock-label">日本時間</span>
+          <span class="live-clock-time js-clock-jp">--:--</span>
+        </div>
+        <div class="live-clock">
+          <span class="live-clock-flag">🇮🇩</span>
+          <span class="live-clock-label">バリ時間（現地）</span>
+          <span class="live-clock-time js-clock-bali">--:--</span>
+        </div>
+      </div>
+      <div class="live-weather js-live-weather">
+        <p class="live-weather-loading">バリの天気を取得中…</p>
+      </div>
+      <div class="live-stargazing js-live-stargazing">
+        <p class="live-weather-loading">今夜の星空情報を取得中…</p>
+      </div>
+
+      <!-- 8月21時ごろ、バリで見える主な星座（目安のイラスト。正確な天文計算による位置図ではありません） -->
+      <div class="constellation-guide">
+        <p class="constellation-guide-title">🔭 8月21時ごろ、バリで見える星座（目安）</p>
+        <svg class="constellation-svg" viewBox="0 0 400 220" role="img" aria-label="8月21時ごろバリの南の空に見える、さそり座・いて座・南十字星の位置の目安を示したイラスト">
+          <defs>
+            <linearGradient id="skyGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0c2938"></stop>
+              <stop offset="100%" stop-color="#123648"></stop>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="400" height="220" fill="url(#skyGradient)"></rect>
+          <line x1="0" y1="190" x2="400" y2="190" class="constellation-horizon"></line>
+          <text x="200" y="208" class="constellation-direction">南の空（低め）</text>
+
+          <!-- 南十字星：4つの星をひし形に結ぶ -->
+          <g class="constellation-mark">
+            <line x1="65" y1="180" x2="65" y2="140"></line>
+            <line x1="45" y1="160" x2="85" y2="160"></line>
+            <circle cx="65" cy="180" r="3"></circle>
+            <circle cx="65" cy="140" r="3"></circle>
+            <circle cx="45" cy="160" r="3"></circle>
+            <circle cx="85" cy="160" r="3"></circle>
+            <text x="65" y="128" class="constellation-label">南十字星</text>
+          </g>
+
+          <!-- さそり座：釣り針のようにカーブする星の並び -->
+          <g class="constellation-mark">
+            <polyline points="170,175 190,150 215,135 235,130 245,115 240,100 225,92" fill="none"></polyline>
+            <circle cx="170" cy="175" r="3"></circle>
+            <circle cx="190" cy="150" r="3"></circle>
+            <circle cx="215" cy="135" r="3.5"></circle>
+            <circle cx="235" cy="130" r="3"></circle>
+            <circle cx="245" cy="115" r="3"></circle>
+            <circle cx="240" cy="100" r="3"></circle>
+            <circle cx="225" cy="92" r="3"></circle>
+            <text x="195" y="188" class="constellation-label">さそり座</text>
+          </g>
+
+          <!-- いて座：ティーポットのような五角形＋注ぎ口 -->
+          <g class="constellation-mark">
+            <polyline points="300,165 330,168 340,150 322,132 300,140 300,165" fill="none"></polyline>
+            <line x1="340" y1="150" x2="360" y2="145"></line>
+            <circle cx="300" cy="165" r="3"></circle>
+            <circle cx="330" cy="168" r="3"></circle>
+            <circle cx="340" cy="150" r="3"></circle>
+            <circle cx="322" cy="132" r="3"></circle>
+            <circle cx="300" cy="140" r="3"></circle>
+            <circle cx="360" cy="145" r="3"></circle>
+            <text x="325" y="185" class="constellation-label">いて座</text>
+          </g>
+        </svg>
+        <ul class="constellation-list">
+          <li>🦂 <strong>さそり座</strong> — 釣り針のようにカーブした形。南の空高くに見えます。</li>
+          <li>🫖 <strong>いて座</strong> — ティーポットのような形。天の川の中心方向にあります。</li>
+          <li>✝️ <strong>南十字星</strong> — 南の低い空に。8月は見えるシーズンの終盤です。</li>
+        </ul>
+        <p class="constellation-note">※実際の星の位置を厳密に計算した図ではなく、目安のイラストです。正確な位置を見たい場合は、Star WalkやStellariumなど無料の星座アプリのご利用がおすすめです。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 下部ナビゲーション -->
+  <nav class="nav-controls">
+    <button class="nav-btn" id="btn-prev">← 戻る</button>
+    <button class="nav-btn nav-btn--home" id="btn-home-2">ホーム</button>
+    <button class="nav-btn" id="btn-next">次へ →</button>
+  </nav>
+</div>
+
+<!-- ============================================================
+     チャプター一覧オーバーレイ
+     ============================================================ -->
+<div class="chapter-menu-overlay hidden" id="chapter-menu-overlay">
+  <div class="chapter-menu-panel">
+    <div class="chapter-menu-header">
+      <h2>チャプター一覧</h2>
+      <button class="icon-btn" id="btn-close-menu">✕</button>
+    </div>
+    <button class="chapter-menu-favtoggle" id="btn-favorites-toggle" type="button">⭐ お気に入りだけ表示</button>
+    <div class="chapter-menu-grid" id="chapter-menu-grid"></div>
+    <p class="chapter-menu-empty hidden" id="chapter-menu-empty">まだお気に入りがありません。☆をタップして登録できます。</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     ライトボックス（フォトギャラリー拡大表示）
+     ============================================================ -->
+<div class="lightbox hidden" id="lightbox">
+  <button class="icon-btn lightbox-close" id="btn-close-lightbox">✕</button>
+  <button class="lightbox-arrow lightbox-arrow--prev" id="btn-lightbox-prev">←</button>
+  <img class="lightbox-img" id="lightbox-img" src="" alt="">
+  <p class="lightbox-caption" id="lightbox-caption"></p>
+  <button class="lightbox-arrow lightbox-arrow--next" id="btn-lightbox-next">→</button>
+</div>
+
+<!-- ============================================================
+     コンテンツモーダル（ホテル紹介の「Google Mapで見る」／LINEチャプターの外部リンクなど）
+     外部サイトへ移動せず、ページ内にiframeで表示することで、
+     「戻る」ボタンで確実に元の画面へ戻れるようにしている
+     ============================================================ -->
+<div class="map-modal hidden" id="map-modal">
+  <div class="map-modal-panel">
+    <div class="map-modal-header">
+      <span class="map-modal-title" id="map-modal-title"></span>
+      <button class="icon-btn" id="btn-close-map" title="閉じる">✕</button>
+    </div>
+    <iframe id="map-modal-iframe" class="map-modal-iframe" src="" title="地図" loading="lazy"></iframe>
+    <button class="nav-btn map-modal-back" id="btn-map-back">← 戻る</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

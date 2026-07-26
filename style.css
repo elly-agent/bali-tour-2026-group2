@@ -1,0 +1,1507 @@
+﻿/* ============================================================
+   BALI TOUR 2026 - style.css
+   ------------------------------------------------------------
+   このファイルは「見た目」を決めるファイルです。
+   色を変えたいときは、下の「カラー変数」だけを書き換えれば
+   サイト全体の色が変わります。
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. カラー・フォント・共通変数
+   ------------------------------------------------------------ */
+:root {
+  /* --- カラーパレット（高級リゾート×南国） --- */
+  --color-white:        #ffffff;
+  --color-sand:         #f3ead9;      /* サンドベージュ */
+  --color-sand-dark:    #e6d7bd;
+  --color-turquoise:    #2ab7c9;      /* ターコイズブルー */
+  --color-turquoise-deep:#0e7c8f;
+  --color-emerald:      #1f8a70;      /* エメラルドグリーン */
+  --color-gold:         #c9a24b;      /* ゴールド */
+  --color-gold-soft:    #e6cf9d;
+  --color-ink:          #22343a;      /* 濃紺寄りの黒（本文用） */
+  --color-ink-soft:     #4a5c62;
+  --color-night:        #06131c;      /* オープニング背景（宇宙） */
+
+  /* --- フォント --- */
+  --font-heading: 'Cormorant Garamond', 'Noto Serif JP', serif;
+  --font-body:    'Noto Sans JP', 'Noto Serif JP', sans-serif;
+  --font-round:   'Zen Maru Gothic', 'Noto Sans JP', sans-serif;
+
+  /* --- 余白・角丸 --- */
+  --space-s: 12px;
+  --space-m: 24px;
+  --space-l: 48px;
+  --space-xl: 96px;
+  --radius-m: 16px;
+  --radius-l: 28px;
+
+  /* --- アニメーション速度 --- */
+  --ease-soft: cubic-bezier(.22,.61,.36,1);
+  --dur-slow: 1.1s;
+  --dur-mid: .6s;
+  --dur-fast: .3s;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--color-sand);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: .02em;
+  margin: 0;
+}
+
+/* text-wrap:pretty は、段落の最後の行に文字が1〜2文字だけ孤立するのを
+   避けてくれる（対応ブラウザのみ。未対応でも見た目は崩れない） */
+p { margin: 0; line-height: 1.9; text-wrap: pretty; }
+img { max-width: 100%; display: block; }
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  background: none;
+  /* スマホでタップ時にズームしたり反応が遅れたりしないようにする */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+ul { list-style: none; margin: 0; padding: 0; }
+
+.hidden { display: none !important; }
+
+/* ------------------------------------------------------------
+   2. ローディング画面
+   ------------------------------------------------------------ */
+.loading-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: linear-gradient(160deg, var(--color-night), #0c2430);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity var(--dur-slow) var(--ease-soft), visibility var(--dur-slow);
+}
+.loading-screen.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.loading-inner { text-align: center; color: var(--color-white); }
+.loading-logo {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  letter-spacing: .18em;
+  color: var(--color-gold-soft);
+  margin-bottom: var(--space-m);
+}
+.loading-bar {
+  width: 220px; height: 3px; background: rgba(255,255,255,.15);
+  border-radius: 4px; overflow: hidden; margin: 0 auto var(--space-s);
+}
+.loading-bar-fill {
+  width: 0%; height: 100%;
+  background: linear-gradient(90deg, var(--color-turquoise), var(--color-gold));
+  transition: width .25s linear;
+}
+.loading-text { font-size: .85rem; opacity: .7; letter-spacing: .08em; }
+
+/* ------------------------------------------------------------
+   3. オープニング演出
+   ------------------------------------------------------------ */
+.opening-screen {
+  position: fixed; inset: 0; z-index: 500;
+  background: radial-gradient(ellipse at 50% 30%, #0c2938, var(--color-night) 70%);
+  overflow: hidden;
+  transition: opacity 1.2s var(--ease-soft), visibility 1.2s;
+}
+.opening-screen.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.starfield { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* 到着シーン「Selamat Datang！」で流れる流れ星 */
+.shooting-stars {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  opacity: 0; transition: opacity .8s ease; z-index: 2;
+}
+.shooting-stars.is-active { opacity: 1; }
+.shooting-star-track { position: absolute; width: 0; height: 0; transform: rotate(215deg); }
+.shooting-star-track.t1 { top: 14%; left: 20%; }
+.shooting-star-track.t2 { top: 32%; left: 68%; }
+.shooting-star-track.t3 { top: 58%; left: 10%; }
+.shooting-star {
+  position: absolute; top: 0; left: 0;
+  width: 3px; height: 3px; border-radius: 50%;
+  background: var(--color-white);
+  box-shadow: 0 0 8px 1px rgba(255,255,255,.9);
+  opacity: 0;
+  animation: shooting-star-fly 3.6s linear infinite;
+}
+.shooting-star::before {
+  content: ""; position: absolute; top: 50%; left: 100%;
+  width: 130px; height: 1px; transform: translateY(-50%);
+  background: linear-gradient(90deg, rgba(255,255,255,.85), transparent);
+}
+.shooting-star-track.t2 .shooting-star { animation-delay: 1.2s; }
+.shooting-star-track.t3 .shooting-star { animation-delay: 2.3s; }
+@keyframes shooting-star-fly {
+  0%   { opacity: 0; transform: translateX(0); }
+  4%   { opacity: 1; }
+  30%  { opacity: 1; transform: translateX(-360px); }
+  40%  { opacity: 0; transform: translateX(-420px); }
+  100% { opacity: 0; transform: translateX(-420px); }
+}
+
+/* 雲（オープニング後半・本編パララックスで共用） */
+.opening-clouds { position: absolute; inset: 0; overflow: hidden; opacity: 0; transition: opacity 1s ease; }
+
+/* 最初の一回だけのタップ画面。スマホは操作なしで音を鳴らせないため、ここでのタップを
+   合図にBGM・効果音を鳴らし始める（演出と音のタイミングを合わせるための画面）。 */
+.opening-tap-gate {
+  position: absolute; inset: 0; z-index: 20;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  gap: var(--space-l);
+  padding-bottom: clamp(40px, 12vh, 96px);
+  background: rgba(6,19,28,.35);
+  opacity: 1; transition: opacity .6s var(--ease-soft), visibility .6s;
+}
+.opening-tap-gate.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.opening-tap-gate-title {
+  font-family: var(--font-heading); font-size: clamp(1.6rem, 6vw, 2.6rem);
+  letter-spacing: .14em; color: var(--color-white);
+  text-shadow: 0 0 40px rgba(42,183,201,.5);
+}
+.opening-tap-gate .btn-primary { animation: opa-glow 2.4s ease-in-out infinite; }
+.opening-clouds.is-visible { opacity: .5; }
+.cloud {
+  position: absolute; background: rgba(255,255,255,.7); border-radius: 50%;
+  filter: blur(8px);
+}
+.cloud--a { width: 220px; height: 60px; top: 20%; left: -20%; animation: drift-cloud 40s linear infinite; }
+.cloud--b { width: 160px; height: 46px; top: 45%; left: -30%; animation: drift-cloud 55s linear infinite; animation-delay: -10s; }
+.cloud--c { width: 260px; height: 70px; top: 68%; left: -25%; animation: drift-cloud 65s linear infinite; animation-delay: -25s; }
+@keyframes drift-cloud { to { transform: translateX(150vw); } }
+
+.opening-stage {
+  position: relative; z-index: 2; width: 100%; height: 100%;
+  display: flex; align-items: center; flex-direction: column;
+  /* 通常は画面の中央に表示する */
+  justify-content: center;
+  /* 画面の高さが低い端末でコンテンツがはみ出す場合は、中央寄せのまま
+     上からスクロールして「しおりを開く」ボタンまで届くようにする
+     （safeキーワード対応ブラウザのみ有効。非対応ブラウザは通常のcenterのまま） */
+  justify-content: safe center;
+  overflow-y: auto;
+  padding: var(--space-m) 0;
+}
+
+/* --- 地球演出 --- */
+.earth-scene {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  opacity: 1; transition: opacity 1s var(--ease-soft), transform 1.2s var(--ease-soft);
+}
+.earth-scene.is-fading { opacity: 0; transform: scale(1.3); }
+.earth-globe-stage {
+  position: relative;
+  width: min(46vh, 320px); height: min(46vh, 320px);
+}
+.earth-route-svg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  overflow: visible; pointer-events: none;
+  z-index: 2;
+}
+.earth-route-path {
+  fill: none; stroke: var(--color-gold-soft); stroke-width: 1.2;
+  stroke-dasharray: 220; stroke-dashoffset: 220;
+  filter: drop-shadow(0 0 3px rgba(230,207,157,.6));
+}
+.earth-route-path.is-drawn { animation: draw-path 1.4s var(--ease-soft) forwards; }
+.earth-globe {
+  width: 100%; height: 100%; border-radius: 50%;
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 35% 30%, #3fb6c9, #146077 55%, #06222c 100%);
+  box-shadow: 0 0 80px rgba(63,182,201,.45), inset -20px -20px 60px rgba(0,0,0,.5);
+  animation: earth-spin 22s linear infinite;
+  overflow: hidden;
+}
+.earth-globe-surface {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 40%, rgba(120,200,140,.55) 0 6%, transparent 7%),
+    radial-gradient(circle at 60% 20%, rgba(120,200,140,.5) 0 9%, transparent 10%),
+    radial-gradient(circle at 75% 65%, rgba(120,200,140,.5) 0 8%, transparent 9%),
+    radial-gradient(circle at 40% 75%, rgba(120,200,140,.45) 0 7%, transparent 8%);
+  background-size: 200% 100%;
+  animation: earth-texture-spin 22s linear infinite;
+}
+@keyframes earth-spin { to { filter: hue-rotate(3deg); } }
+@keyframes earth-texture-spin { to { background-position: -200% 0; } }
+
+/* 赤道ライン(バリ島が赤道近くにあることが分かるように、地球の中央に表示) */
+.earth-equator {
+  position: absolute; left: 0; right: 0; top: 50%; height: 2px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    to right,
+    transparent, rgba(255,255,255,.65) 12%, rgba(255,255,255,.85) 50%,
+    rgba(255,255,255,.65) 88%, transparent
+  );
+}
+.earth-equator-label {
+  position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+  font-size: .6rem; letter-spacing: .2em; color: rgba(255,255,255,.75);
+  white-space: nowrap;
+}
+
+.japan-glow {
+  position: absolute; top: 32%; left: 68%;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--color-gold);
+  box-shadow: 0 0 0 0 rgba(201,162,75,.6);
+  opacity: 0; transform: scale(0);
+  transition: opacity .8s ease, transform .8s var(--ease-soft);
+}
+.japan-glow.is-lit {
+  opacity: 1; transform: scale(1);
+  animation: japan-pulse 1.6s ease-in-out infinite;
+}
+@keyframes japan-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,162,75,.55); }
+  50%     { box-shadow: 0 0 0 18px rgba(201,162,75,0); }
+}
+
+/* バリ島の光点(日本と同時に光り、航路ラインで結ばれる) */
+.bali-glow {
+  position: absolute; top: 62%; left: 58%;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--color-turquoise);
+  box-shadow: 0 0 0 0 rgba(42,183,201,.6);
+  opacity: 0; transform: scale(0);
+  transition: opacity .8s ease .3s, transform .8s var(--ease-soft) .3s;
+}
+.bali-glow.is-lit {
+  opacity: 1; transform: scale(1);
+  animation: bali-pulse 1.6s ease-in-out infinite;
+}
+@keyframes bali-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(42,183,201,.55); }
+  50%     { box-shadow: 0 0 0 18px rgba(42,183,201,0); }
+}
+
+/* --- 飛行ルート演出 --- */
+.flight-scene {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 1s var(--ease-soft);
+}
+.flight-scene.is-visible { opacity: 1; }
+.flight-svg { width: min(90vw, 900px); height: auto; overflow: visible; }
+.flight-path {
+  fill: none; stroke: var(--color-gold-soft); stroke-width: 2.5;
+  stroke-dasharray: 1200; stroke-dashoffset: 1200;
+  filter: drop-shadow(0 0 4px rgba(230,207,157,.6));
+}
+.flight-path.is-drawn { animation: draw-path 3.2s var(--ease-soft) forwards; }
+@keyframes draw-path { to { stroke-dashoffset: 0; } }
+.flight-dot { fill: var(--color-turquoise); opacity: 0; transition: opacity .4s ease; }
+.flight-dot.is-visible { opacity: 1; }
+.flight-label {
+  fill: var(--color-white); font-family: var(--font-body); font-size: 15px;
+  opacity: 0; transition: opacity .5s ease;
+}
+.flight-label.is-visible { opacity: .9; }
+.plane-icon {
+  position: absolute; font-size: 28px; opacity: 0;
+  transform: translate(-50%, -50%) rotate(35deg);
+  filter: drop-shadow(0 0 6px rgba(0,0,0,.4));
+  transition: opacity .4s ease;
+  offset-rotate: auto;
+}
+.plane-icon.is-flying { opacity: 1; }
+
+/* --- キャプション・到着メッセージ・タイトル --- */
+.opening-caption {
+  position: relative; z-index: 3; text-align: center; color: var(--color-white);
+  margin-top: 56vh; padding: 0 var(--space-m);
+}
+.opening-caption-text {
+  font-family: var(--font-heading); font-size: clamp(1.2rem, 3.2vw, 1.9rem);
+  letter-spacing: .04em; opacity: 0; transform: translateY(14px);
+  transition: opacity .8s var(--ease-soft), transform .8s var(--ease-soft);
+}
+.opening-caption-text.is-visible { opacity: 1; transform: translateY(0); }
+.opening-caption-sub {
+  margin-top: var(--space-s); font-size: .95rem; color: var(--color-sand-dark);
+  opacity: 0; transition: opacity .8s ease .2s;
+}
+.opening-caption-sub.is-visible { opacity: .85; }
+
+.opening-arrival { text-align: center; color: var(--color-white); z-index: 3; }
+.arrival-greeting {
+  font-family: var(--font-heading); font-size: clamp(2rem, 6vw, 3.4rem);
+  color: var(--color-gold-soft);
+  opacity: 0; transform: scale(.9);
+  animation: pop-in 1.1s var(--ease-soft) forwards;
+}
+.arrival-sub {
+  margin-top: var(--space-s); font-size: 1.1rem; letter-spacing: .08em;
+  opacity: 0; animation: fade-up 1s var(--ease-soft) forwards .5s;
+}
+@keyframes pop-in { to { opacity: 1; transform: scale(1); } }
+@keyframes fade-up { to { opacity: .9; } }
+
+.opening-title { text-align: center; color: var(--color-white); z-index: 3; }
+.opening-title-producer {
+  font-size: 1rem; letter-spacing: .18em; color: var(--color-gold-soft);
+  margin-bottom: 10px;
+  opacity: 0; animation: fade-up-title 1.2s var(--ease-soft) forwards;
+}
+.opening-title-main {
+  font-family: var(--font-heading); font-size: clamp(2.4rem, 8vw, 4.6rem);
+  letter-spacing: .12em; color: var(--color-white);
+  text-shadow: 0 0 40px rgba(42,183,201,.5);
+  opacity: 0; transform: translateY(20px);
+  animation: fade-up-title 1.2s var(--ease-soft) forwards;
+}
+.opening-title-sub {
+  margin-top: var(--space-s); font-size: 1.05rem; color: var(--color-sand-dark);
+  letter-spacing: .04em;
+  opacity: 0; animation: fade-up-title 1.2s var(--ease-soft) forwards .3s;
+}
+.opening-title-sub2 {
+  margin-top: 6px; font-size: .92rem; color: var(--color-gold-soft);
+  letter-spacing: .04em;
+  opacity: 0; animation: fade-up-title 1.2s var(--ease-soft) forwards .45s;
+}
+@keyframes fade-up-title { to { opacity: 1; transform: translateY(0); } }
+
+.btn-primary, .btn-secondary {
+  margin-top: var(--space-l);
+  display: inline-block;
+  padding: 14px 42px;
+  border-radius: 999px;
+  font-size: .95rem;
+  letter-spacing: .1em;
+  transition: transform var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+}
+.btn-primary {
+  background: linear-gradient(120deg, var(--color-turquoise), var(--color-emerald));
+  color: var(--color-white);
+  box-shadow: 0 8px 24px rgba(31,138,112,.35);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(31,138,112,.45); }
+.btn-secondary {
+  background: var(--color-white);
+  color: var(--color-turquoise-deep);
+  border: 1px solid var(--color-turquoise);
+}
+.btn-secondary:hover { transform: translateY(-2px); }
+
+/* ------------------------------------------------------------
+   4. 本編アプリの共通レイアウト
+   ------------------------------------------------------------ */
+/* body側ですでに height:100% (拡大縮小しない安定した高さ) を確保しているため、
+   ここは 100vh のような「アドレスバーの開閉で伸び縮みする」単位を使わず、
+   親(body)の安定した高さをそのまま引き継ぐ。 */
+.app { height: 100%; display: flex; flex-direction: column; }
+.app-hidden { display: none; }
+
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+  padding: 14px var(--space-m);
+  background: rgba(243,234,217,.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(201,162,75,.25);
+}
+.topbar-left { min-width: 0; overflow: hidden; }
+.topbar-logo {
+  font-family: var(--font-heading); font-weight: 700; letter-spacing: .1em;
+  color: var(--color-turquoise-deep); font-size: 1.1rem;
+  display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.current-chapter-label {
+  font-size: .85rem; letter-spacing: .06em; color: var(--color-ink-soft);
+}
+.topbar-right { display: flex; gap: 4px; flex-shrink: 0; }
+.icon-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; color: var(--color-ink); flex-shrink: 0;
+  transition: background var(--dur-fast) ease, transform var(--dur-fast) ease;
+}
+.icon-btn:hover { background: rgba(201,162,75,.18); transform: scale(1.06); }
+
+/* topbarのすぐ下、白い余白部分に常設する3つのショートカットボタン */
+.shortcut-bar {
+  position: fixed; top: var(--topbar-h, 66px); left: 0; right: 0; z-index: 199;
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
+  padding: 8px var(--space-m);
+  background: rgba(243,234,217,.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(201,162,75,.25);
+}
+.shortcut-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 999px; border: none; cursor: pointer;
+  color: var(--color-white); font-size: .78rem; font-weight: 600; letter-spacing: .02em;
+  box-shadow: 0 4px 12px rgba(0,0,0,.18);
+  transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+  animation: shortcut-float 2.6s ease-in-out infinite;
+}
+.shortcut-pill:hover { transform: translateY(-4px); animation-play-state: paused; }
+.shortcut-pill-icon { font-size: .95rem; }
+.shortcut-pill--bgm { background: var(--color-gold); animation-delay: 0s; }
+.shortcut-pill--today { background: var(--color-turquoise-deep); animation-delay: .35s; }
+.shortcut-pill--today:hover { background: var(--color-turquoise); }
+.shortcut-pill--weather { background: var(--color-emerald); animation-delay: .7s; }
+
+@keyframes shortcut-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shortcut-pill { animation: none; }
+}
+
+/* BGM切り替えボタン：一目でON/OFFがわかるよう、状態に応じて見た目を大きく変える */
+#btn-bgm {
+  position: relative;
+  border: 1.5px solid transparent;
+}
+#btn-bgm.is-on {
+  background: rgba(201,162,75,.22);
+  border-color: rgba(201,162,75,.55);
+  animation: bgm-btn-pulse 2.4s ease-in-out infinite;
+}
+#btn-bgm.is-off {
+  background: rgba(34,52,58,.06);
+  border-color: rgba(34,52,58,.15);
+  opacity: .6;
+}
+@keyframes bgm-btn-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,162,75,.4); }
+  50%     { box-shadow: 0 0 0 7px rgba(201,162,75,0); }
+}
+
+/* BGM選択メニュー：BGMボタンをタップすると曲を選べるパネルが下に開く */
+.bgm-control { position: relative; }
+/* position:fixedにすることで、狭い画面用の overflow-x:auto (.topbar-right) に
+   よってドロップダウンが見切れてしまうのを防ぐ（表示位置はJSで計算） */
+.bgm-menu {
+  position: fixed;
+  width: min(78vw, 240px);
+  background: var(--color-white); border-radius: var(--radius-m);
+  box-shadow: 0 10px 30px rgba(0,0,0,.22);
+  padding: 12px; z-index: 250;
+}
+.bgm-menu-onoff {
+  width: 100%; text-align: center; padding: 10px; border-radius: var(--radius-m);
+  background: var(--color-sand); color: var(--color-ink); font-size: .88rem;
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+.bgm-menu-onoff.is-on { background: var(--color-turquoise); color: var(--color-white); }
+.bgm-menu-divider { height: 1px; background: var(--color-sand-dark); margin: 12px 0 8px; }
+.bgm-menu-label { font-size: .7rem; color: var(--color-ink-soft); letter-spacing: .05em; margin-bottom: 6px; }
+.bgm-track-list { display: flex; flex-direction: column; gap: 6px; }
+.bgm-track-item {
+  text-align: left; padding: 9px 10px; border-radius: var(--radius-m);
+  background: var(--color-sand); font-size: .82rem; color: var(--color-ink);
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+.bgm-track-item:hover { background: var(--color-sand-dark); }
+.bgm-track-item.is-selected { background: var(--color-turquoise); color: var(--color-white); }
+
+/* 「BGMを選べます」の初回ヒント吹き出し */
+.bgm-hint {
+  position: fixed; z-index: 260;
+  background: var(--color-ink); color: var(--color-white);
+  padding: 8px 14px; border-radius: var(--radius-m);
+  font-size: .78rem; white-space: nowrap;
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+  opacity: 0; transform: translateY(-6px); pointer-events: none;
+  transition: opacity .35s ease, transform .35s ease;
+}
+.bgm-hint.is-visible { opacity: 1; transform: translateY(0); pointer-events: auto; cursor: pointer; }
+.bgm-hint::before {
+  content: ""; position: absolute; top: -5px; right: 18px;
+  width: 10px; height: 10px; background: var(--color-ink);
+  transform: rotate(45deg);
+}
+.bgm-hint.hidden { display: none; }
+
+.progress-bar {
+  position: fixed; top: var(--header-h, 118px); left: 0; right: 0; z-index: 199;
+  height: 3px; background: rgba(34,52,58,.08);
+}
+.progress-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--color-turquoise), var(--color-gold));
+  transition: width .4s var(--ease-soft);
+}
+
+.slides-viewport {
+  /* flex:1 (= flex-basis:0%) だと、下の height:calc(...) 指定は
+     ブラウザに完全に無視され、実際の高さは常に「flexで埋められる分」だけで
+     決まってしまう(これまでdvh→svhに変更しても何も変わらなかった原因)。
+     flex-basis:auto にして、下のheight指定を実際にそのまま使わせる。 */
+  flex: 1 1 auto; margin-top: calc(var(--header-h, 118px) + 3px);
+  /* 下部固定ナビの高さ(ホームインジケーター分の余白込み)だけ、常に空けておく。
+     これが足りないと、ノッチ付きiPhoneなどでチャプターの一番下がナビの下に
+     隠れてしまい、スクロールしても最後まで見えなくなる。 */
+  margin-bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+  height: calc(100vh - var(--header-h, 118px) - 77px - env(safe-area-inset-bottom, 0px));
+  /* dvh（アドレスバーの出し引きに合わせて値が変わる単位）は、スクロール中に
+     アドレスバーが自動で隠れると高さが伸び縮みしてしまい、そのたびに
+     スクロール位置がクランプされ直して急に上へ戻ってしまう不具合の原因に
+     なっていた。svh（アドレスバー表示時=一番小さい高さ）を使えば、
+     スクロール中に土台の高さ自体が変化しなくなる（対応ブラウザのみ） */
+  height: calc(100svh - var(--header-h, 118px) - 77px - env(safe-area-inset-bottom, 0px));
+  overflow: hidden; position: relative;
+}
+/* 高さ100%指定だと、レイアウトの都合で高さが0になってしまう場合があるため、
+   親要素(.slides-viewport)にぴったり重なるよう絶対位置指定で確実に高さを持たせる */
+.slides-track { position: absolute; inset: 0; }
+
+.slide {
+  position: absolute; inset: 0;
+  overflow: hidden;
+  opacity: 0; visibility: hidden;
+  transform: translateX(40px) scale(.98);
+  transition: opacity var(--dur-slow) var(--ease-soft), transform var(--dur-slow) var(--ease-soft), visibility var(--dur-slow);
+  background:
+    radial-gradient(circle at 90% 10%, rgba(42,183,201,.08), transparent 45%),
+    radial-gradient(circle at 10% 90%, rgba(201,162,75,.10), transparent 45%),
+    var(--color-white);
+}
+.slide.is-active { opacity: 1; visibility: visible; transform: none; z-index: 2; }
+.slide.is-prev { transform: translateX(-40px) scale(.98); }
+
+/* スクロールを実際に担当する要素は、スライド切り替え演出のtransformを
+   一切持たせない別の内側の箱にする。「transformを持つ要素にscrollTopを
+   代入しても画面に反映されないことがある」というWebKitの描画バグを、
+   transform:noneへの変更だけでは解消しきれなかったための、より確実な対策。 */
+.slide-scroll {
+  position: absolute; inset: 0;
+  overflow-y: auto; overflow-x: hidden;
+  /* scroll-behavior:smoothがiPhoneのタッチスクロールと干渉している疑いが
+     あるため、指でのスクロールには一切影響しない、最も素朴な挙動に戻す */
+  /* 一番下(または上)まで指でスクロールした時、iOSでは overflow:hidden の
+     bodyであってもタッチのスクロールが外側のページへ「連鎖」してしまい、
+     ゴムのように弾んで戻る(ラバーバンド)ことがある。それがスクロール位置の
+     巻き戻りに見えていた可能性が高いため、この要素の外へスクロールを
+     一切逃さないようにする。 */
+  overscroll-behavior: contain;
+  padding: var(--space-l) var(--space-m);
+}
+
+/* 中身が画面より短い時は縦中央に、長い時は上から自然に流れて
+   最後まで確実にスクロールできるようにする（flexでの中央寄せ＋overflow:autoの
+   組み合わせは、はみ出した分の一部がスクロールで届かなくなる既知の不具合があるため避ける） */
+.slide-inner {
+  width: 100%; max-width: 880px; margin: 0 auto; padding-bottom: var(--space-l); position: relative;
+  min-height: 100%; display: flex; flex-direction: column; justify-content: center;
+}
+
+/* ブランドロゴマーク(OPA)：バリ島ってどこ？チャプターの冒頭に、控えめに配置 */
+.brand-mark { display: flex; justify-content: center; margin-bottom: var(--space-m); }
+.brand-mark-img {
+  width: 64px; height: 64px; object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(34,52,58,.15));
+}
+
+.chapter-eyebrow {
+  color: var(--color-gold); font-size: .85rem; letter-spacing: .28em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.chapter-title {
+  font-size: clamp(1.7rem, 4.2vw, 2.6rem); color: var(--color-turquoise-deep);
+  margin-bottom: var(--space-m);
+  white-space: pre-line;
+}
+.chapter-lead { font-size: 1.05rem; color: var(--color-ink-soft); margin-bottom: var(--space-m); }
+
+/* Chapter 1（旅のテーマ）：テーマ・目的・効果を並べて表示する */
+.theme-message-block { margin-bottom: var(--space-l); }
+.theme-message-block:last-child { margin-bottom: 0; }
+.theme-message-label {
+  font-family: var(--font-heading); font-weight: 700; letter-spacing: .18em;
+  font-size: .95rem; color: var(--color-turquoise-deep); margin-bottom: 8px;
+}
+.theme-message-text {
+  font-family: var(--font-heading); font-size: 1.2rem; line-height: 1.7; letter-spacing: .02em;
+  color: var(--color-ink);
+}
+
+/* ------------------------------------------------------------
+   5. スクロール出現アニメーション（reveal）
+   ------------------------------------------------------------ */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s var(--ease-soft), transform .8s var(--ease-soft); }
+.reveal.is-in { opacity: 1; transform: translateY(0); }
+.reveal-group .reveal:nth-child(1) { transition-delay: .05s; }
+.reveal-group .reveal:nth-child(2) { transition-delay: .15s; }
+.reveal-group .reveal:nth-child(3) { transition-delay: .25s; }
+.reveal-group .reveal:nth-child(4) { transition-delay: .35s; }
+.reveal-group .reveal:nth-child(5) { transition-delay: .45s; }
+
+/* ------------------------------------------------------------
+   6. 画像の共通スタイル
+   ------------------------------------------------------------
+   写真が assets/images/ に無い場合は、script.js が自動的に
+   「ここに写真を追加してください」という案内画像に差し替えます。
+   ------------------------------------------------------------ */
+.ph-img {
+  width: 100%; aspect-ratio: 16/10; object-fit: cover;
+  border-radius: var(--radius-m);
+  background: linear-gradient(135deg, var(--color-sand-dark), var(--color-sand));
+}
+
+/* ------------------------------------------------------------
+   7. 各チャプター専用スタイル
+   ------------------------------------------------------------ */
+
+/* --- 地球（Ch1） --- */
+.world-map-visual { display: flex; align-items: center; gap: var(--space-l); flex-wrap: wrap; margin-bottom: var(--space-m); }
+.mini-globe {
+  width: 160px; height: 160px; border-radius: 50%; flex-shrink: 0;
+  background: radial-gradient(circle at 35% 30%, #3fb6c9, #146077 60%, #06222c 100%);
+  box-shadow: 0 0 40px rgba(42,183,201,.3);
+  animation: earth-spin 18s linear infinite;
+  position: relative; overflow: hidden;
+}
+.mini-globe-surface {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 30% 40%, rgba(120,200,140,.5) 0 8%, transparent 9%),
+                     radial-gradient(circle at 65% 65%, rgba(120,200,140,.5) 0 7%, transparent 8%);
+  background-size: 200% 100%;
+  animation: earth-texture-spin 18s linear infinite;
+}
+/* バリ島の位置を示す目印(地球儀の上に固定表示するピン) */
+.bali-pin {
+  position: absolute; left: 60%; top: 62%; transform: translate(-50%, -50%);
+  display: flex; align-items: center; gap: 5px; white-space: nowrap;
+}
+.bali-pin-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--color-gold);
+  box-shadow: 0 0 0 0 rgba(201,162,75,.6);
+  animation: japan-pulse 1.8s ease-in-out infinite;
+}
+.bali-pin-label {
+  font-size: .72rem; font-weight: 700; color: var(--color-white);
+  background: rgba(34,52,58,.55); padding: 2px 8px; border-radius: 999px;
+  backdrop-filter: blur(2px);
+}
+.route-points { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 10px; }
+.route-points li {
+  padding: 10px 16px; border-left: 3px solid var(--color-turquoise);
+  background: var(--color-sand); border-radius: 0 var(--radius-m) var(--radius-m) 0;
+}
+.route-points li strong { color: var(--color-turquoise-deep); display: block; }
+.route-points li span { font-size: .85rem; color: var(--color-ink-soft); }
+
+/* 赤道直下の豆知識（バリ島ってどこ？チャプター） */
+.equator-note {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: linear-gradient(120deg, rgba(42,183,201,.1), rgba(201,162,75,.1));
+  border: 1px solid rgba(42,183,201,.25);
+  border-radius: var(--radius-m); padding: var(--space-s) var(--space-m);
+  margin-bottom: var(--space-m); font-size: .92rem; line-height: 1.7; color: var(--color-ink-soft);
+}
+.equator-note-icon { font-size: 1.2rem; flex-shrink: 0; line-height: 1.6; }
+
+.stat-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-s); }
+.stat-card {
+  background: var(--color-sand); border-radius: var(--radius-m); padding: var(--space-m);
+  text-align: center; display: flex; flex-direction: column; gap: 6px;
+  transition: transform var(--dur-fast) var(--ease-soft);
+}
+.stat-card:hover { transform: translateY(-4px); }
+.stat-icon { font-size: 1.6rem; }
+
+/* 現在時刻(日本/バリ)＆天気予報カード */
+.live-info {
+  background: var(--color-white); border-radius: var(--radius-l);
+  padding: var(--space-m); margin-top: var(--space-m);
+  box-shadow: 0 6px 20px rgba(0,0,0,.06);
+  border: 1px solid var(--color-sand-dark);
+}
+.live-clocks { display: flex; gap: var(--space-m); margin-bottom: var(--space-m); flex-wrap: wrap; }
+.live-clock {
+  flex: 1; min-width: 140px; text-align: center;
+  background: var(--color-sand); border-radius: var(--radius-m); padding: 12px;
+}
+.live-clock-flag { font-size: 1.3rem; display: block; }
+.live-clock-label { font-size: .72rem; color: var(--color-ink-soft); display: block; margin-top: 2px; }
+.live-clock-time {
+  font-family: var(--font-heading); font-size: 1.5rem; color: var(--color-turquoise-deep);
+  display: block; margin-top: 4px; letter-spacing: .05em;
+}
+.live-weather-loading, .live-weather-error {
+  text-align: center; color: var(--color-ink-soft); font-size: .85rem; padding: var(--space-s) 0;
+}
+.live-weather-now {
+  display: flex; align-items: center; gap: var(--space-m);
+  padding-bottom: var(--space-s); margin-bottom: var(--space-s);
+  border-bottom: 1px solid var(--color-sand-dark);
+}
+.live-weather-now-icon { font-size: 2.4rem; }
+.live-weather-now-temp { font-family: var(--font-heading); font-size: 1.8rem; color: var(--color-ink); }
+.live-weather-now-desc { font-size: .82rem; color: var(--color-ink-soft); margin-top: 2px; }
+.live-weather-forecast { display: flex; gap: 8px; }
+.live-weather-day {
+  flex: 1; text-align: center; background: var(--color-sand);
+  border-radius: var(--radius-m); padding: 8px 4px;
+}
+.live-weather-day-label { font-size: .7rem; color: var(--color-ink-soft); display: block; }
+.live-weather-day-icon { font-size: 1.3rem; display: block; margin: 4px 0; }
+.live-weather-day-desc { font-size: .68rem; color: var(--color-ink-soft); display: block; }
+.live-weather-day-temp { font-size: .76rem; color: var(--color-ink); display: block; margin-top: 2px; }
+
+/* 今夜の星空情報 */
+.live-stargazing-inner {
+  margin-top: var(--space-s); padding-top: var(--space-s);
+  border-top: 1px solid var(--color-sand-dark);
+}
+.live-stargazing-title { font-weight: 700; color: var(--color-ink); margin-bottom: 8px; font-size: .9rem; }
+.live-stargazing-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: .85rem; color: var(--color-ink); padding: 4px 0;
+}
+.live-stargazing-note { font-size: .74rem; color: var(--color-ink-soft); margin-top: 6px; }
+
+/* 星座ガイド（目安のイラスト） */
+.constellation-guide {
+  margin-top: var(--space-s); padding-top: var(--space-s);
+  border-top: 1px solid var(--color-sand-dark);
+}
+.constellation-guide-title { font-weight: 700; color: var(--color-ink); margin-bottom: 8px; font-size: .9rem; }
+.constellation-svg {
+  width: 100%; height: auto; border-radius: var(--radius-m); display: block; margin-bottom: 10px;
+}
+.constellation-horizon { stroke: rgba(255,255,255,.35); stroke-width: 1; }
+.constellation-direction { fill: rgba(255,255,255,.6); font-size: 11px; text-anchor: middle; }
+.constellation-mark circle { fill: #fff; }
+.constellation-mark polyline, .constellation-mark line { stroke: rgba(255,255,255,.7); stroke-width: 1.5; }
+.constellation-label { fill: var(--color-gold-soft); font-size: 12px; font-weight: 700; text-anchor: middle; }
+.constellation-list { list-style: none; padding: 0; margin: 0; font-size: .82rem; color: var(--color-ink); line-height: 1.6; }
+.constellation-list li { margin-bottom: 4px; }
+.constellation-note { font-size: .72rem; color: var(--color-ink-soft); margin-top: 8px; }
+.stat-label { font-size: .8rem; color: var(--color-ink-soft); }
+.stat-value { font-weight: 600; color: var(--color-turquoise-deep); }
+
+/* --- 基本情報グリッド（Ch2） --- */
+.info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-s); }
+.info-card {
+  background: var(--color-sand); border-radius: var(--radius-m); padding: var(--space-m);
+  text-align: center; transition: transform var(--dur-fast) var(--ease-soft);
+}
+.info-card:hover { transform: translateY(-4px) scale(1.02); }
+.info-card .info-icon { font-size: 1.8rem; display: block; margin-bottom: 8px; }
+.info-card .info-label { font-size: .78rem; color: var(--color-ink-soft); display: block; }
+.info-card .info-value { font-weight: 600; color: var(--color-emerald); margin-top: 4px; display: block; }
+
+/* --- ストーリー系（Ch3, Ch4）--- */
+.story-image { margin-bottom: var(--space-m); position: relative; }
+.story-text { display: flex; flex-direction: column; gap: var(--space-s); margin-bottom: var(--space-m); }
+.story-text p { color: var(--color-ink-soft); }
+.keyword-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.keyword-chips span {
+  background: var(--color-turquoise); color: var(--color-white);
+  padding: 6px 16px; border-radius: 999px; font-size: .82rem;
+}
+.incense { position: absolute; top: 20px; right: 40px; width: 4px; height: 60px; }
+.incense-smoke {
+  position: absolute; bottom: 0; left: 0; width: 3px; height: 3px; border-radius: 50%;
+  background: rgba(150,150,150,.35);
+  animation: smoke-rise 4s ease-in infinite;
+}
+.incense-smoke.s2 { animation-delay: 1.3s; }
+.incense-smoke.s3 { animation-delay: 2.6s; }
+@keyframes smoke-rise {
+  0% { transform: translate(0,0) scale(1); opacity: .5; }
+  100% { transform: translate(14px,-90px) scale(4); opacity: 0; }
+}
+
+/* --- フレーズカード（Ch5） --- */
+.phrase-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-s); }
+.phrase-card {
+  background: var(--color-sand); border-radius: var(--radius-m); padding: var(--space-m);
+  transition: transform var(--dur-fast) var(--ease-soft);
+}
+.phrase-card:hover { transform: translateY(-3px); }
+.phrase-card .phrase-jp { font-weight: 700; color: var(--color-turquoise-deep); font-size: 1.05rem; }
+.phrase-card .phrase-id { margin-top: 6px; color: var(--color-emerald); }
+.phrase-card .phrase-pron { margin-top: 2px; font-size: .82rem; color: var(--color-ink-soft); }
+
+/* --- 通貨（Ch6） --- */
+.currency-photo-caption {
+  text-align: center; font-size: .82rem; color: var(--color-ink-soft);
+  margin: -4px 0 var(--space-m);
+}
+.currency-tip {
+  background: linear-gradient(120deg, rgba(201,162,75,.15), rgba(42,183,201,.12));
+  border-left: 4px solid var(--color-gold);
+  padding: var(--space-m); border-radius: 0 var(--radius-m) var(--radius-m) 0;
+  margin-bottom: var(--space-m); color: var(--color-ink);
+  white-space: pre-line; line-height: 1.8;
+}
+.currency-table { width: 100%; border-collapse: collapse; margin-bottom: var(--space-m); }
+.currency-table th, .currency-table td {
+  padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--color-sand-dark);
+}
+.currency-table th { color: var(--color-turquoise-deep); font-size: .85rem; letter-spacing: .05em; }
+.currency-calc {
+  background: var(--color-sand); border-radius: var(--radius-m); padding: var(--space-m);
+}
+.currency-calc label { display: block; margin-bottom: 10px; font-size: .85rem; color: var(--color-ink-soft); }
+.currency-calc-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.currency-calc-row input {
+  width: 140px; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--color-sand-dark);
+  font-size: 1rem;
+}
+.currency-calc-output { font-weight: 700; color: var(--color-emerald); font-size: 1.1rem; }
+
+/* 現地でよく使う「ルピア→円」計算機。チャプター冒頭に置くため、目立つ配色にする */
+.currency-calc--primary {
+  background: linear-gradient(135deg, var(--color-turquoise), var(--color-emerald));
+  margin-bottom: var(--space-m);
+}
+.currency-calc--primary label { color: rgba(255,255,255,.9); }
+.currency-calc--primary .currency-calc-row span:not(.currency-calc-output) { color: var(--color-white); }
+.currency-calc--primary .currency-calc-output { color: var(--color-white); }
+
+/* --- 物価の目安 --- */
+.price-list { margin-top: var(--space-m); }
+.price-list-title {
+  font-family: var(--font-heading); font-size: 1.05rem; color: var(--color-turquoise-deep);
+  margin-bottom: var(--space-s);
+}
+.price-list-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.price-list-item {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--color-sand); border-radius: var(--radius-m); padding: 12px 14px;
+}
+.price-list-icon { font-size: 1.5rem; flex-shrink: 0; }
+.price-list-item-name { font-size: .82rem; color: var(--color-ink-soft); display: block; }
+.price-list-item-price { font-weight: 700; color: var(--color-emerald); font-size: .92rem; display: block; }
+
+/* --- 値切り（Ch7） --- */
+.bargain-bubbles { display: flex; flex-direction: column; gap: 12px; margin: var(--space-m) 0; }
+.bargain-row { display: flex; align-items: flex-end; gap: 8px; }
+.bargain-row.is-me { flex-direction: row-reverse; }
+.bargain-avatar {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+.bargain-avatar svg { display: block; }
+.bargain-bubble {
+  max-width: 66%; padding: 12px 18px; border-radius: var(--radius-m);
+  background: var(--color-sand); opacity: 0; transform: translateY(10px);
+  transition: opacity .5s var(--ease-soft), transform .5s var(--ease-soft);
+}
+.bargain-bubble.is-in { opacity: 1; transform: translateY(0); }
+.bargain-bubble.is-me { background: var(--color-turquoise); color: var(--color-white); }
+.bargain-bubble .b-speaker { font-size: .75rem; opacity: .7; display: block; margin-bottom: 4px; }
+.bargain-comment { font-style: italic; color: var(--color-emerald); }
+
+/* --- 服装（Ch8） --- */
+.clothing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-s); }
+.clothing-card {
+  background: var(--color-sand); border-radius: var(--radius-m); padding: var(--space-m);
+  text-align: center; transition: transform var(--dur-fast) var(--ease-soft);
+}
+.clothing-card:hover { transform: translateY(-4px); }
+.clothing-card .c-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+.clothing-card .c-scene { font-weight: 700; color: var(--color-turquoise-deep); display: block; margin-bottom: 6px; }
+.clothing-card .c-advice { font-size: .85rem; color: var(--color-ink-soft); }
+
+/* --- チェックリスト（Ch9） --- */
+.checklist-category {
+  font-size: 1rem; color: var(--color-gold); letter-spacing: .04em;
+  margin: var(--space-m) 0 10px;
+}
+.checklist-category:first-child { margin-top: 0; }
+.checklist { display: flex; flex-direction: column; gap: 8px; margin-bottom: var(--space-s); }
+.checklist li {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; background: var(--color-sand); border-radius: var(--radius-m);
+  cursor: pointer; transition: background var(--dur-fast) ease;
+}
+.checklist li:hover { background: var(--color-sand-dark); }
+.checklist li input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--color-emerald); flex-shrink: 0; }
+.item-text { display: flex; flex-direction: column; gap: 2px; }
+.item-label { color: var(--color-ink); }
+.item-note { font-size: .78rem; color: var(--color-ink-soft); }
+.checklist li.is-checked .item-label { text-decoration: line-through; color: var(--color-ink-soft); opacity: .6; }
+.checklist li.is-checked .item-note { opacity: .4; }
+
+/* 絶対に忘れてはいけない持ち物を、赤字太字で目立たせる */
+.checklist li.is-urgent { background: rgba(214,49,49,.08); border: 1.5px solid rgba(214,49,49,.35); }
+.checklist li.is-urgent .item-label { color: #d63131; font-weight: 700; }
+.checklist li.is-urgent .item-note { color: #d63131; }
+.checklist li.is-urgent.is-checked .item-label,
+.checklist li.is-urgent.is-checked .item-note { color: var(--color-ink-soft); font-weight: 400; }
+.packing-tip {
+  background: linear-gradient(120deg, rgba(201,162,75,.15), rgba(42,183,201,.12));
+  border-left: 4px solid var(--color-gold);
+  padding: var(--space-m); border-radius: 0 var(--radius-m) var(--radius-m) 0;
+  margin-top: var(--space-m); color: var(--color-ink);
+}
+
+/* --- タイムライン（Ch10） --- */
+.itinerary-timeline { display: flex; flex-direction: column; gap: var(--space-m); border-left: 2px solid var(--color-gold-soft); padding-left: var(--space-m); margin-top: var(--space-m); }
+.timeline-item { position: relative; }
+.timeline-item::before {
+  content: ""; position: absolute; left: calc(-1 * var(--space-m) - 6px); top: 6px;
+  width: 12px; height: 12px; border-radius: 50%; background: var(--color-gold); border: 2px solid var(--color-white);
+}
+.timeline-item .t-date { font-size: .8rem; color: var(--color-gold); letter-spacing: .05em; }
+.timeline-item .t-title { font-size: 1.2rem; color: var(--color-turquoise-deep); margin: 4px 0 10px; }
+.timeline-item .t-image { margin-bottom: 10px; }
+.timeline-item .t-events { display: flex; flex-wrap: wrap; gap: 6px; }
+.timeline-item .t-events span {
+  background: var(--color-sand); padding: 5px 12px; border-radius: 999px; font-size: .8rem; color: var(--color-ink-soft);
+}
+.timeline-item.is-today {
+  background: rgba(201,162,75,.1); border-radius: var(--radius-m);
+  padding: var(--space-s); margin-left: calc(-1 * var(--space-s));
+  box-shadow: 0 0 0 2px var(--color-gold);
+}
+.timeline-item.is-today::before { background: var(--color-turquoise-deep); width: 16px; height: 16px; left: calc(-1 * var(--space-m) - 8px); top: 4px; }
+.t-today-badge {
+  display: inline-block; margin-left: 8px; padding: 2px 10px; border-radius: 999px;
+  background: var(--color-turquoise-deep); color: var(--color-white); font-size: .68rem;
+  font-weight: 700; letter-spacing: .08em; vertical-align: middle;
+}
+
+/* --- ホテル（Ch11） --- */
+.hotel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-m); }
+.hotel-card { background: var(--color-sand); border-radius: var(--radius-l); overflow: hidden; }
+.hotel-card .h-body { padding: var(--space-m); }
+.hotel-card .h-name { color: var(--color-turquoise-deep); font-size: 1.1rem; margin-bottom: 6px; }
+.hotel-card .h-feature { font-size: .88rem; color: var(--color-ink-soft); margin-bottom: 6px; }
+.hotel-card .h-location { font-size: .8rem; color: var(--color-ink-soft); margin-bottom: 10px; }
+.hotel-card .h-map-btn {
+  display: inline-block; padding: 8px 20px; border-radius: 999px; font-size: .8rem;
+  background: var(--color-emerald); color: var(--color-white);
+}
+
+/* --- グルメ（Ch12） --- */
+.gourmet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-m); }
+.gourmet-card { background: var(--color-sand); border-radius: var(--radius-m); overflow: hidden; text-align: center; }
+.gourmet-card .g-name { padding: 10px 8px 2px; color: var(--color-turquoise-deep); font-weight: 700; }
+.gourmet-card .g-desc { padding: 0 12px 14px; font-size: .8rem; color: var(--color-ink-soft); }
+
+/* --- バリの見どころ（Ch16） --- */
+.spots-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-m); }
+.spot-card { background: var(--color-sand); border-radius: var(--radius-m); overflow: hidden; }
+.spot-body { padding: var(--space-s) var(--space-m) var(--space-m); }
+.spot-name { color: var(--color-turquoise-deep); font-weight: 700; margin-bottom: 6px; }
+.spot-desc { font-size: .85rem; color: var(--color-ink-soft); line-height: 1.7; }
+
+/* --- 豆知識カード（Ch13） --- */
+.trivia-card-wrap { text-align: center; }
+.trivia-card {
+  background: linear-gradient(135deg, var(--color-turquoise), var(--color-emerald));
+  color: var(--color-white); border-radius: var(--radius-l);
+  padding: var(--space-m) var(--space-l); min-height: 80px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.05rem; margin-bottom: var(--space-m);
+  transition: transform .5s var(--ease-soft), opacity .3s ease;
+}
+.trivia-card.is-flip { transform: rotateY(90deg); opacity: .4; }
+.trivia-card-wrap .btn-secondary { margin-top: var(--space-s); }
+
+/* --- バリ物語（Ch17・水彩イラストで綴る成り立ち） --- */
+.bali-story-title {
+  margin-top: var(--space-m);
+  text-align: center;
+  font-family: var(--font-round);
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--color-turquoise-deep);
+  letter-spacing: .06em;
+}
+.bali-story {
+  margin-top: var(--space-m);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+.bali-story-panel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  background: var(--color-sand);
+  border-radius: var(--radius-l);
+  padding: var(--space-s);
+  box-shadow: 0 6px 20px rgba(34,52,58,.08);
+}
+.bali-story-panel:nth-child(even) { flex-direction: row-reverse; }
+.bali-story-img {
+  width: 42%; flex-shrink: 0;
+  height: auto;
+  border-radius: var(--radius-m);
+  box-shadow: 0 4px 14px rgba(34,52,58,.15);
+}
+.bali-story-text {
+  font-family: var(--font-round);
+  font-weight: 500;
+  font-size: .96rem;
+  line-height: 1.9;
+  color: var(--color-ink);
+}
+@media (max-width: 600px) {
+  .bali-story-panel, .bali-story-panel:nth-child(even) {
+    flex-direction: column;
+  }
+  .bali-story-img { width: 100%; }
+}
+
+/* --- ルートMAP（Ch14） --- */
+.route-map-visual { position: relative; margin-bottom: var(--space-m); border-radius: var(--radius-m); overflow: hidden; }
+.route-map-bg-image { width: 100%; height: auto; display: block; }
+.route-map-svg--overlay { position: absolute; inset: 0; width: 100%; height: 100%; }
+.route-map-city { fill: rgba(255,255,255,.85); stroke: var(--color-turquoise-deep); stroke-width: 5; }
+.route-map-city-num {
+  font-family: var(--font-heading); font-size: 26px; font-weight: 700;
+  fill: var(--color-turquoise-deep); text-anchor: middle; dominant-baseline: central;
+}
+.route-map-path { fill: none; stroke: var(--color-gold); stroke-width: 5; stroke-dasharray: 10 10; }
+.route-current-marker {
+  position: absolute; font-size: 2.6rem;
+  transition: left .8s var(--ease-soft), top .8s var(--ease-soft), transform .8s var(--ease-soft);
+  transform: translate(-50%, -50%) rotate(var(--heading, 0deg));
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.4));
+  z-index: 5;
+}
+/* マーカーの後ろに常時ふわっと光る輪を出して、地図上で見つけやすくする */
+.route-current-marker::before {
+  content: ""; position: absolute; inset: -16px; z-index: -1; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.6), transparent 70%);
+  animation: route-marker-pulse 1.6s ease-in-out infinite;
+}
+@keyframes route-marker-pulse {
+  0%, 100% { transform: scale(.8); opacity: .55; }
+  50%      { transform: scale(1.2); opacity: 1; }
+}
+/* 日付を切り替えた瞬間だけ、風で流れるような線をさっと後方に見せる */
+.route-current-marker.is-moving::after {
+  content: ""; position: absolute; top: 50%; right: 100%; margin-right: 4px;
+  width: 30px; height: 6px; transform: translateY(-50%);
+  background-image:
+    linear-gradient(90deg, transparent, rgba(255,255,255,.9) 60%, transparent),
+    linear-gradient(90deg, transparent, rgba(255,255,255,.9) 60%, transparent),
+    linear-gradient(90deg, transparent, rgba(255,255,255,.9) 60%, transparent);
+  background-size: 100% 2px; background-repeat: no-repeat;
+  background-position: 0 0, 0 50%, 0 100%;
+  animation: route-wind-trail .7s ease-out;
+  pointer-events: none;
+}
+@keyframes route-wind-trail {
+  0%   { opacity: 0; transform: translateY(-50%) translateX(14px); }
+  25%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-50%) translateX(-6px); }
+}
+
+/* 日付をタップしてもらう最初の一回だけ表示する、控えめなヒント */
+.route-days-hint {
+  font-size: .8rem; font-weight: 600; color: var(--color-turquoise-deep);
+  background: rgba(42,183,201,.12); border: 1px dashed var(--color-turquoise);
+  border-radius: 999px; padding: 6px 14px; display: inline-block;
+  margin-bottom: 8px;
+  animation: route-hint-bounce 1.2s ease-in-out infinite;
+}
+@keyframes route-hint-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+.route-map-days { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--space-s); }
+.route-map-days button {
+  padding: 8px 18px; border-radius: 999px;
+  background: var(--color-white); border: 2px solid var(--color-turquoise);
+  color: var(--color-turquoise-deep); font-size: .82rem; font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+  animation: shortcut-float 2.6s ease-in-out infinite;
+}
+.route-map-days button:hover { box-shadow: 0 6px 16px rgba(0,0,0,.16); animation-play-state: paused; }
+.route-map-days button.is-active { background: var(--color-turquoise); color: var(--color-white); }
+.route-map-days button:nth-child(1) { animation-delay: 0s; }
+.route-map-days button:nth-child(2) { animation-delay: .15s; }
+.route-map-days button:nth-child(3) { animation-delay: .3s; }
+.route-map-days button:nth-child(4) { animation-delay: .45s; }
+.route-map-days button:nth-child(5) { animation-delay: .6s; }
+.route-map-days button:nth-child(6) { animation-delay: .75s; }
+.route-map-days button:nth-child(7) { animation-delay: .9s; }
+@media (prefers-reduced-motion: reduce) {
+  .route-map-days button { animation: none; }
+}
+
+/* 帰国日の隣の「帰国」ボタン。他の日付ボタンと区別できる黄〜オレンジ色にする */
+.route-depart-btn {
+  background: linear-gradient(120deg, #ffc266, #ff9800);
+  border-color: #ff9800; color: var(--color-white);
+}
+.route-depart-btn:hover { background: linear-gradient(120deg, #ffd28a, #ffa726); }
+
+/* 「帰国」ボタンを押すと、地図上の飛行機がそのまま飛び立って画面の外へ消えていく演出 */
+@keyframes route-marker-depart {
+  0%   { opacity: 1; }
+  20%  { opacity: 1; }
+  100% { transform: translate(-50%, -50%) rotate(var(--heading, -45deg)) translate(260px, -220px) scale(.2); opacity: 0; }
+}
+.route-current-marker.is-departing {
+  animation: route-marker-depart 1.6s cubic-bezier(.3, 0, .7, 1) forwards;
+}
+.route-map-current-label { font-weight: 600; color: var(--color-emerald); }
+.route-map-highlights { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.route-map-highlight-chip {
+  background: var(--color-sand); color: var(--color-ink); font-size: .82rem;
+  padding: 6px 14px; border-radius: 999px; border: 1px solid var(--color-gold-soft);
+}
+
+/* --- ギャラリー（Ch15） --- */
+.gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.gallery-item { position: relative; border-radius: var(--radius-m); overflow: hidden; cursor: pointer; }
+.gallery-item img { transition: transform .5s var(--ease-soft); }
+.gallery-item:hover img { transform: scale(1.08); }
+.gallery-item .g-caption {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 10px;
+  background: linear-gradient(to top, rgba(0,0,0,.6), transparent);
+  color: var(--color-white); font-size: .72rem;
+}
+
+/* --- FAQ（Ch16） --- */
+.faq-list { display: flex; flex-direction: column; gap: 10px; }
+.faq-item { background: var(--color-sand); border-radius: var(--radius-m); overflow: hidden; }
+.faq-q {
+  width: 100%; text-align: left; padding: 16px 20px; font-weight: 600;
+  font-size: 1.05rem; line-height: 1.5;
+  color: var(--color-turquoise-deep); display: flex; justify-content: space-between; gap: 10px;
+}
+.faq-a {
+  max-height: 0; overflow: hidden; transition: max-height .4s var(--ease-soft), padding .4s ease;
+  padding: 0 20px; color: var(--color-ink-soft); font-size: .96rem;
+}
+.faq-item.is-open .faq-a { max-height: 300px; padding: 0 20px 18px; }
+.faq-item.is-open .faq-q .faq-arrow { transform: rotate(180deg); }
+.faq-arrow { transition: transform var(--dur-fast) ease; }
+
+/* --- レストラン紹介（Ch19） --- */
+.restaurant-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-m); }
+.restaurant-card { background: var(--color-sand); border-radius: var(--radius-m); overflow: hidden; text-align: center; }
+.restaurant-card .r-name { padding: 10px 10px 2px; color: var(--color-turquoise-deep); font-weight: 700; font-size: .92rem; }
+.restaurant-card .r-desc { padding: 0 12px 14px; font-size: .78rem; color: var(--color-ink-soft); line-height: 1.6; }
+
+/* --- SATORU会 公式LINE案内 --- */
+.line-feature-card {
+  text-align: center; margin-top: var(--space-l);
+  background: linear-gradient(160deg, rgba(31,138,112,.08), rgba(201,162,75,.1));
+  border: 1px solid rgba(31,138,112,.25);
+  border-radius: var(--radius-l); padding: var(--space-l) var(--space-m);
+}
+.line-feature-title { font-family: var(--font-heading); font-size: 1.3rem; color: var(--color-turquoise-deep); }
+.line-feature-note { font-size: .8rem; color: var(--color-ink-soft); margin-top: 4px; letter-spacing: .05em; }
+.line-feature-link { display: inline-block; }
+
+/* --- エンディング --- */
+.slide--ending {
+  background: linear-gradient(180deg, #ffd9a0 0%, #ff9d6c 35%, #e9636b 65%, #3b3466 100%) !important;
+  color: var(--color-white);
+  /* overflow:hidden だと縦方向のスクロールまで無効になり、画面より長い
+     メッセージが最後まで見られなくなってしまうため、横方向だけ隠す */
+  overflow-x: hidden;
+}
+.ending-sun {
+  position: absolute; left: 50%; top: 60%; transform: translate(-50%,-50%);
+  width: 240px; height: 240px; border-radius: 50%;
+  background: radial-gradient(circle, #fff6d6, #ffcf7a 60%, transparent 72%);
+  animation: sun-glow 6s ease-in-out infinite;
+}
+@keyframes sun-glow { 0%,100% { opacity: .85; } 50% { opacity: 1; } }
+.ending-plane {
+  position: absolute; font-size: 2.4rem; left: 20%; top: 55%;
+  animation: fly-to-sunset 8s var(--ease-soft) infinite;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.3));
+}
+@keyframes fly-to-sunset {
+  0% { transform: translate(0,0) scale(1); opacity: .9; }
+  100% { transform: translate(60vw,-18vh) scale(.3); opacity: 0; }
+}
+.ending-inner { position: relative; z-index: 2; text-align: center; }
+.ending-producer {
+  font-size: .8rem; letter-spacing: .18em; color: rgba(255,255,255,.85);
+  margin-bottom: 10px;
+}
+.ending-title {
+  font-family: var(--font-heading); font-size: clamp(2.2rem, 7vw, 4rem);
+  letter-spacing: .1em; text-shadow: 0 4px 20px rgba(0,0,0,.25);
+}
+.ending-message { margin-top: var(--space-m); font-size: 1.2rem; }
+.ending-sub { margin-top: var(--space-s); opacity: .85; }
+
+
+/* Chapter 10（旅行の流れ）のタイトル行：見出しとラッキーオパのボタンを横並びにする */
+.chapter-title-row {
+  display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-s);
+}
+.chapter-title-row .chapter-title { margin: 0; }
+
+/* Chapter 10（旅行の流れ）に常設する、ラッキーオパへのボタン */
+.opa-daily-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: none; cursor: pointer;
+  background: linear-gradient(120deg, #ff8a8a, #ffd08a, #a8e6a1, #8ad0e6, #b79cf0);
+  color: var(--color-white);
+  font-size: .82rem; font-weight: 600; letter-spacing: .04em;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  transition: box-shadow var(--dur-fast) var(--ease-soft);
+  animation: shortcut-float 2.6s ease-in-out infinite;
+}
+.opa-daily-btn:hover { box-shadow: 0 12px 30px rgba(0,0,0,.28); animation-play-state: paused; }
+.opa-daily-btn-icon { font-size: 1.1rem; }
+@media (prefers-reduced-motion: reduce) {
+  .opa-daily-btn { animation: none; }
+}
+
+/* ボタンを押した瞬間、ふわっと光るアニメーション（常時の浮遊アニメーションに重ねて再生する） */
+.opa-daily-btn.is-glowing { animation: shortcut-float 2.6s ease-in-out infinite, opa-glow .9s var(--ease-soft); }
+@keyframes opa-glow {
+  0%   { box-shadow: 0 8px 24px rgba(0,0,0,.2); filter: brightness(1); }
+  35%  { box-shadow: 0 0 34px 12px rgba(255,255,255,.85); filter: brightness(1.4); }
+  100% { box-shadow: 0 8px 24px rgba(0,0,0,.2); filter: brightness(1); }
+}
+
+/* ラッキーオパのボタンを押した時に画面へふわっとかかる、透明感のある虹エフェクト */
+.rainbow-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(115deg,
+    rgba(255,110,110,.32), rgba(255,196,110,.32), rgba(255,246,130,.32),
+    rgba(140,230,150,.32), rgba(120,200,255,.32), rgba(160,140,240,.32), rgba(230,140,230,.32));
+  background-size: 300% 300%;
+  backdrop-filter: blur(1px);
+}
+.rainbow-overlay.is-active { animation: rainbow-sweep 1.4s ease-out; }
+@keyframes rainbow-sweep {
+  0%   { opacity: 0; background-position: 0% 50%; }
+  20%  { opacity: 1; }
+  75%  { opacity: 1; background-position: 100% 50%; }
+  100% { opacity: 0; background-position: 100% 50%; }
+}
+
+/* ------------------------------------------------------------
+   8. ナビゲーション・チャプターメニュー・ライトボックス
+   ------------------------------------------------------------ */
+.nav-controls {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px var(--space-m);
+  /* ホームインジケーターのある機種(iPhone X以降)で、ボタンが画面の一番端に
+     めり込んでタップしづらくならないよう、その分の余白を追加する */
+  padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  background: rgba(243,234,217,.9); backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(201,162,75,.25);
+}
+.nav-btn {
+  padding: 10px 22px; min-height: 44px; border-radius: 999px; font-size: .9rem;
+  background: var(--color-white); color: var(--color-turquoise-deep);
+  border: 1px solid var(--color-turquoise); transition: transform var(--dur-fast) ease;
+}
+.nav-btn:hover { transform: translateY(-2px); }
+.nav-btn--home { background: var(--color-turquoise); color: var(--color-white); border: none; }
+
+/* チャプター一覧：画面右からスライドインする「サイドバー」形式 */
+.chapter-menu-overlay {
+  position: fixed; inset: 0; z-index: 300; background: rgba(6,19,28,.55);
+  backdrop-filter: blur(3px); display: flex; align-items: stretch; justify-content: flex-end;
+}
+.chapter-menu-panel {
+  background: var(--color-white);
+  border-radius: var(--radius-l) 0 0 var(--radius-l);
+  width: min(84vw, 340px); height: 100%; max-height: 100%;
+  overflow-y: auto; padding: var(--space-l) var(--space-m);
+  box-shadow: -10px 0 34px rgba(0,0,0,.28);
+}
+.chapter-menu-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: var(--space-m); padding-bottom: var(--space-s);
+  border-bottom: 1px solid var(--color-sand-dark);
+}
+.chapter-menu-header h2 { color: var(--color-turquoise-deep); font-size: 1.1rem; }
+.chapter-menu-favtoggle {
+  display: block; width: 100%; text-align: center;
+  padding: 8px 14px; margin-bottom: var(--space-s); border-radius: 999px;
+  background: var(--color-sand); color: var(--color-ink-soft);
+  font-size: .82rem; font-weight: 600;
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+.chapter-menu-favtoggle.is-active { background: var(--color-gold); color: var(--color-white); }
+.chapter-menu-empty { text-align: center; color: var(--color-ink-soft); font-size: .82rem; padding: var(--space-m) 0; }
+.chapter-menu-grid { display: flex; flex-direction: column; gap: 8px; }
+.chapter-menu-item {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--color-sand); border-radius: var(--radius-m);
+  transition: background var(--dur-fast) ease, transform var(--dur-fast) ease;
+}
+.chapter-menu-item:hover { background: var(--color-sand-dark); transform: translateX(-2px); }
+.chapter-menu-item-nav {
+  flex: 1; display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; text-align: left; min-width: 0;
+}
+.chapter-menu-item .m-num { font-size: .7rem; color: var(--color-gold); flex-shrink: 0; min-width: 32px; }
+.chapter-menu-item .m-title { font-size: .88rem; color: var(--color-ink); white-space: pre-line; }
+.favorite-star-btn {
+  color: var(--color-ink-soft); transition: transform var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+.favorite-star-btn:hover { transform: scale(1.15); }
+.favorite-star-btn.is-favorite { color: var(--color-gold); }
+.chapter-menu-item-star { flex-shrink: 0; font-size: 1.2rem; padding: 10px 14px; }
+
+/* 各チャプターページのタイトル付近に置く、お気に入り☆ボタン */
+.chapter-page-star {
+  position: absolute; top: var(--space-m); right: var(--space-m);
+  font-size: 1.5rem; z-index: 4;
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,.15));
+}
+.chapter-menu-item.is-current { background: var(--color-turquoise); }
+.chapter-menu-item.is-current .m-num,
+.chapter-menu-item.is-current .m-title { color: var(--color-white); }
+
+.lightbox {
+  position: fixed; inset: 0; z-index: 400; background: rgba(6,19,28,.92);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--space-s); padding: var(--space-l);
+}
+.lightbox-img { max-width: 86vw; max-height: 70vh; border-radius: var(--radius-m); object-fit: contain; }
+.lightbox-caption { color: var(--color-white); opacity: .85; }
+.lightbox-close { position: absolute; top: var(--space-m); right: var(--space-m); color: var(--color-white); font-size: 1.2rem; }
+.lightbox-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); color: var(--color-white);
+  font-size: 2rem; padding: 10px 16px; opacity: .7; transition: opacity var(--dur-fast) ease;
+}
+.lightbox-arrow:hover { opacity: 1; }
+.lightbox-arrow--prev { left: var(--space-m); }
+.lightbox-arrow--next { right: var(--space-m); }
+
+/* --- 地図モーダル --- */
+.map-modal {
+  position: fixed; inset: 0; z-index: 450; background: rgba(6,19,28,.85);
+  display: flex; align-items: center; justify-content: center; padding: var(--space-m);
+}
+.map-modal-panel {
+  background: var(--color-white); border-radius: var(--radius-l); overflow: hidden;
+  width: min(720px, 100%); max-height: 90vh; display: flex; flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+}
+.map-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px var(--space-m); border-bottom: 1px solid var(--color-sand-dark);
+}
+.map-modal-title { font-weight: 700; color: var(--color-turquoise-deep); }
+.map-modal-iframe { width: 100%; height: min(60vh, 480px); border: 0; display: block; }
+.map-modal-back {
+  margin: var(--space-m); align-self: center;
+}
+
+/* --- 持ち物チェック完了のお祝いポップアップ --- */
+.checklist-complete-popup {
+  position: fixed; inset: 0; z-index: 460; background: rgba(6,19,28,.75);
+  display: flex; align-items: center; justify-content: center; padding: var(--space-m);
+}
+.checklist-complete-popup.hidden { display: none; }
+.checklist-complete-panel {
+  background: var(--color-white); border-radius: var(--radius-l);
+  width: min(340px, 100%); box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  padding: var(--space-l) var(--space-m); text-align: center;
+}
+.checklist-complete-emoji { font-size: 3rem; margin-bottom: var(--space-s); animation: shortcut-float 1.6s ease-in-out infinite; }
+.checklist-complete-title {
+  font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700;
+  color: var(--color-turquoise-deep); margin-bottom: var(--space-s);
+}
+.checklist-complete-text { font-size: .92rem; color: var(--color-ink-soft); line-height: 1.7; margin-bottom: var(--space-m); }
+.checklist-complete-panel .btn-primary { margin-top: 0; }
+
+/* --- 天気・時間ポップアップ --- */
+.weather-popup {
+  position: fixed; inset: 0; z-index: 450; background: rgba(6,19,28,.75);
+  display: flex; align-items: center; justify-content: center; padding: var(--space-m);
+}
+.weather-popup.hidden { display: none; }
+.weather-popup-panel {
+  background: var(--color-white); border-radius: var(--radius-l);
+  width: min(400px, 100%); box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  padding: var(--space-m) var(--space-m) var(--space-l);
+  max-height: 100%; overflow-y: auto;
+}
+.weather-popup-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--space-s); padding-bottom: var(--space-s);
+  border-bottom: 1px solid var(--color-sand-dark);
+}
+.weather-popup-title { font-weight: 700; color: var(--color-turquoise-deep); font-size: 1.05rem; }
+
+/* ------------------------------------------------------------
+   9. レスポンシブ対応（タブレット・スマホ）
+   ------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .info-grid { grid-template-columns: repeat(2, 1fr); }
+  .clothing-grid { grid-template-columns: repeat(2, 1fr); }
+  .gourmet-grid { grid-template-columns: repeat(2, 1fr); }
+  .hotel-grid { grid-template-columns: 1fr; }
+  .spots-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+  .phrase-cards { grid-template-columns: 1fr; }
+  .stat-cards { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .topbar { padding: 10px 10px; gap: 6px; }
+  .topbar-logo { font-size: .85rem; }
+  .current-chapter-label { display: none; }
+  .topbar-right { gap: 2px; }
+  .icon-btn { width: 38px; height: 38px; font-size: .9rem; }
+  .shortcut-bar { padding: 6px var(--space-s); gap: 6px; }
+  .shortcut-pill { padding: 7px 12px; font-size: .72rem; }
+  .slides-viewport {
+    margin-bottom: calc(66px + env(safe-area-inset-bottom, 0px));
+    height: calc(100vh - var(--header-h, 104px) - 69px - env(safe-area-inset-bottom, 0px));
+    height: calc(100svh - var(--header-h, 104px) - 69px - env(safe-area-inset-bottom, 0px));
+  }
+  .slide { padding: var(--space-m) var(--space-s); }
+  .info-grid { grid-template-columns: repeat(2, 1fr); }
+  .clothing-grid { grid-template-columns: 1fr; }
+  .gourmet-grid { grid-template-columns: repeat(2, 1fr); }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .world-map-visual { flex-direction: column; text-align: center; }
+  .chapter-menu-panel { width: min(88vw, 320px); }
+  .nav-btn { padding: 9px 14px; font-size: .8rem; }
+  .bargain-bubble { max-width: 88%; }
+  .price-list-grid { grid-template-columns: 1fr; }
+}
+
+/* 横幅がさらに狭い機種向け(iPhone SEなど）: ボタンがはみ出さないようもう一段階小さくする */
+@media (max-width: 380px) {
+  .topbar { padding: 8px 8px; }
+  .topbar-logo { font-size: .72rem; }
+  .icon-btn { width: 32px; height: 32px; font-size: .8rem; }
+  .topbar-right { gap: 1px; overflow-x: auto; }
+  .shortcut-pill-text { display: none; }
+  .shortcut-pill { padding: 8px; }
+}
+
+/* ダークモード等での可読性のため、印刷時は非表示にする演出要素 */
+@media print { .opening-screen, .topbar, .nav-controls { display: none !important; } }

@@ -1,0 +1,500 @@
+{
+  "_readme": "このファイルを書き換えるだけでサイトの内容が更新されます。HTMLやCSS、JSは触らなくてOKです。画像は assets/images フォルダに、同じファイル名の写真を置くだけで差し替わります（例: bali-overview.jpg というファイル名の画像を用意して assets/images に入れてください）。",
+
+  "meta": {
+    "producer": "㈱星の降る里プロデュース",
+    "tourName": "BALI TOUR 2026",
+    "subtitle": "最高の思い出を一緒につくりましょう！",
+    "startDate": "2026-08-13",
+    "endDate": "2026-08-18",
+    "departureCity": "日本",
+    "destinationCity": "バリ島（デンパサール）",
+    "transitCity": "シンガポール",
+    "timeDifference": "-1時間（日本より1時間遅い）"
+  },
+
+  "_bgmTracksReadme": "BGMの選択肢はここで管理しています。新しい曲を追加したい場合は、assets/audio に音声ファイルを置いて、下のリストに { \"id\":任意の名前, \"label\":一覧に表示する曲名, \"files\":[{\"src\":\"assets/audio/ファイル名\",\"volume\":0〜1の音量}] } を追加してください（AIに頼めば代わりに追加できます）。",
+  "bgmTracks": [
+    { "id": "bali-tide-calm", "label": "Bali Tide Calm", "files": [
+        { "src": "assets/audio/bali-tide-calm.mp3", "volume": 0.14 }
+      ] },
+    { "id": "tsuki-no-sunahama", "label": "月の砂浜", "files": [
+        { "src": "assets/audio/tsuki-no-sunahama.mp3", "volume": 0.14 }
+      ] },
+    { "id": "whispers-of-the-night", "label": "Whispers of the Night", "files": [
+        { "src": "assets/audio/whispers-of-the-night.mp3", "volume": 0.14 }
+      ] },
+    { "id": "seaside", "label": "シーサイド（波の音）", "files": [
+        { "src": "assets/audio/seaside.wav", "volume": 0.22 }
+      ] }
+  ],
+  "defaultBgmTrackId": "bali-tide-calm",
+
+  "opening": {
+    "steps": [
+      { "text": "宇宙から、地球を見てみましょう。", "sub": "" },
+      { "text": "地球がゆっくりと回転しています。", "sub": "" },
+      { "text": "日本と、バリ島が光ります。", "sub": "海を越えて、あなたの旅がつながります。" },
+      { "text": "飛行機が離陸しました。", "sub": "日本 → シンガポール → デンパサール" }
+    ],
+    "arrivalGreeting": "Selamat Datang！",
+    "arrivalSubGreeting": "ようこそ、バリ島へ。",
+    "titleMain": "BALI TOUR 2026",
+    "titleSub": "",
+    "titleSub2": "〜自分におはようと声をかけましょう〜",
+    "startLabel": "あなたの旅を開く"
+  },
+
+  "prologue": {
+    "themeLabel": "テーマ",
+    "theme": "魂の中のあふれる思いを持つそこを\n手放す旅",
+    "purposeLabel": "目的",
+    "purpose": "さまざまな気持ちを押し込めてきた\nこれまでの開放",
+    "effectLabel": "効果",
+    "effect": "2026年の新たな世界に向けて馴染む。\n情報の質量を考えない聞き取りのやり方を思う存分わかるため\n準備ができる。"
+  },
+
+  "chapters": [
+    { "id": "theme-intro", "number": 1, "title": "旅のテーマ", "type": "theme" },
+    { "id": "map-intro", "number": 2, "title": "バリ島ってどこ？", "type": "world-map" },
+    { "id": "basic-info", "number": 3, "title": "バリ島 基本情報", "type": "basic-info" },
+    { "id": "religion", "number": 4, "title": "宗教\n〜ヒンドゥー教と祈りの島〜", "type": "story" },
+    { "id": "people", "number": 5, "title": "バリの人々", "type": "story" },
+    { "id": "gourmet", "number": 6, "title": "バリグルメ", "type": "gourmet" },
+    { "id": "spots", "number": 7, "title": "バリの見どころ", "type": "spots" },
+    { "id": "gallery", "number": 8, "title": "フォトギャラリー", "type": "gallery" },
+    { "id": "map", "number": 9, "title": "旅行ルートMAP", "type": "route-map" },
+    { "id": "itinerary", "number": 10, "title": "旅行の流れ", "type": "itinerary" },
+    { "id": "hotels", "number": 11, "title": "ホテル紹介", "type": "hotels" },
+    { "id": "restaurants", "number": 12, "title": "レストラン紹介", "type": "restaurants" },
+    { "id": "language", "number": 13, "title": "旅で使う言葉", "type": "phrases" },
+    { "id": "currency", "number": 14, "title": "通貨 〜ルピア〜", "type": "currency" },
+    { "id": "bargain", "number": 15, "title": "値段交渉を楽しもう", "type": "bargain" },
+    { "id": "clothing", "number": 16, "title": "服装", "type": "clothing" },
+    { "id": "trivia", "number": 17, "title": "バリ豆知識", "type": "trivia" },
+    { "id": "faq", "number": 18, "title": "よくある質問", "type": "faq" },
+    { "id": "packing", "number": 19, "title": "持ち物チェックリスト", "type": "checklist" },
+    { "id": "line", "number": 20, "title": "バリでもチェック！ラッキーオパ", "type": "line" }
+  ],
+
+  "worldMap": {
+    "description": "バリ島は、インドネシアという国の中にある、小さくて美しい島です。",
+    "equatorNote": "インドネシアは地球のちょうど真ん中、赤道直下に位置する国。バリ島もその赤道のすぐ近くにあるため、一年を通して常夏の気候に恵まれています。",
+    "points": [
+      { "label": "日本", "note": "あなたの出発地" },
+      { "label": "シンガポール", "note": "経由地" },
+      { "label": "インドネシア", "note": "バリ島がある国" },
+      { "label": "バリ島（デンパサール）", "note": "目的地" }
+    ],
+    "distanceKm": "約5,800km",
+    "flightHours": "約7〜8時間（乗り継ぎ含む）",
+    "timeDifference": "日本より1時間遅い"
+  },
+
+  "basicInfo": [
+    { "icon": "🇮🇩", "label": "国名", "value": "インドネシア共和国" },
+    { "icon": "👥", "label": "人口（バリ州）", "value": "約430万人" },
+    { "icon": "🗺️", "label": "面積（バリ島）", "value": "約5,780km²（東京都の約2.6倍）" },
+    { "icon": "🏛️", "label": "州", "value": "バリ州（州都：デンパサール）" },
+    { "icon": "☀️", "label": "乾季", "value": "4月〜10月頃" },
+    { "icon": "🌧️", "label": "雨季", "value": "11月〜3月頃" },
+    { "icon": "🌡️", "label": "年間気温", "value": "約26〜31℃" },
+    { "icon": "🌊", "label": "海水温", "value": "約27〜29℃" }
+  ],
+
+  "religion": {
+    "title": "祈りとともにある、島の暮らし",
+    "paragraphs": [
+      "バリ島の多くの人々は、ヒンドゥー教（バリ・ヒンドゥー）を信仰しています。",
+      "毎朝、家々の軒先や店先に「チャナン」と呼ばれる小さなお供え物が並びます。花やお米、お香を乗せた、感謝と祈りのかたちです。",
+      "島のいたるところに寺院（プラ）があり、人々は自然や神々への感謝を、静かに、日常の中で表現しています。"
+    ],
+    "keywords": ["ヒンドゥー教", "チャナン（毎日のお供え）", "寺院（プラ）", "祈り"]
+  },
+
+  "people": {
+    "title": "笑顔で迎えてくれる、バリの人々",
+    "paragraphs": [
+      "バリの人々は穏やかで優しく、家族やコミュニティを大切にします。",
+      "音楽やダンス、彫刻や絵画といった芸術文化が、暮らしの中に自然に息づいています。",
+      "旅の途中で交わす、何気ない笑顔のあいさつも、きっと素敵な思い出になります。"
+    ],
+    "keywords": ["笑顔", "優しさ", "家族を大切に", "芸術文化", "音楽", "ダンス"]
+  },
+
+  "phrases": [
+    { "jp": "ありがとう", "id": "Terima kasih（トゥリマカシ）", "pron": "トゥリマカシ" },
+    { "jp": "どういたしまして", "id": "Sama-sama（サマサマ）", "pron": "サマサマ" },
+    { "jp": "いくらですか？", "id": "Berapa ongkosnya?（ブラパ・オンコスニャ）", "pron": "ブラパオンコスニャ" },
+    { "jp": "お願いします", "id": "Tolong（トロン）", "pron": "トロン" },
+    { "jp": "はい", "id": "Ya（ヤ）", "pron": "ヤ" },
+    { "jp": "いいえ", "id": "Tidak（ティダ）", "pron": "ティダ" },
+    { "jp": "道に迷ってしまいました", "id": "Saya tersesat（サヤ・トゥルササール）", "pron": "サヤトゥルササール" },
+    { "jp": "まけてもらえませんか？", "id": "Boleh tawar?（ボレ・タワール）", "pron": "ボレタワール" }
+  ],
+
+  "currency": {
+    "title": "ルピア（IDR）ってどれくらい？",
+    "description": "インドネシアの通貨は「ルピア（Rp）」。桁が大きいので、はじめは戸惑うかもしれません。",
+    "currencyPhotoCaption": "実際にバリで手にしたルピア紙幣（100,000・10,000・5,000ルピア）。旅先で使う金額の感覚を、こんな風に確かめられます。",
+    "tip": "コツ①：値札の右側にある「000（下3桁）」を隠して読むと、現地での金額感覚がつかみやすくなります（例：100,000ルピア→100）。\nコツ②：そこからさらに10倍する（0をもうひとつ足す）と、だいたいの日本円の目安になります。例えば10,000ルピアなら、0を3つ消して10→10倍で約100円。100,000ルピアなら、0を3つ消して100→10倍で約1,000円です（※実際のレートは変動するため、あくまで目安としてご利用ください）。\nコツ③：メニューや値札では「35k」のように「k」で千の位を表すこともあります（35k＝35,000ルピア）。「k」を見かけたら「000」に読み替えてください。",
+    "rateNote": "1円 ≒ 100ルピア（目安レート。実際は変動します）",
+    "quickTable": [
+      { "jpy": "1,000円", "idr": "約100,000ルピア" },
+      { "jpy": "5,000円", "idr": "約500,000ルピア" },
+      { "jpy": "10,000円", "idr": "約1,000,000ルピア" }
+    ],
+    "rateJpyToIdr": 100,
+    "priceList": [
+      { "icon": "💧", "item": "ミネラルウォーター（500ml）", "idr": "約5,000ルピア", "jpy": "約50円" },
+      { "icon": "🍞", "item": "食パン（1斤）", "idr": "約20,000ルピア", "jpy": "約200円" },
+      { "icon": "🍖", "item": "お肉（市場・100g目安）", "idr": "約15,000〜20,000ルピア", "jpy": "約150〜200円" },
+      { "icon": "🍛", "item": "屋台のナシゴレン", "idr": "約25,000〜35,000ルピア", "jpy": "約250〜350円" },
+      { "icon": "☕", "item": "カフェのコーヒー", "idr": "約25,000〜40,000ルピア", "jpy": "約250〜400円" },
+      { "icon": "🍺", "item": "缶ビール", "idr": "約25,000〜35,000ルピア", "jpy": "約250〜350円" }
+    ]
+  },
+
+  "bargain": {
+    "title": "値切りは、笑顔で楽しむコミュニケーション",
+    "comment": "笑顔で楽しく交渉しましょう。値切りは「戦い」ではなく「会話」。相手の目を見て、笑顔で、楽しみながら。",
+    "conversation": [
+      { "speaker": "お店の人", "text": "300,000Rp でどう？" },
+      { "speaker": "あなた", "text": "うーん…200,000Rp なら買うよ！" },
+      { "speaker": "お店の人", "text": "OK！じゃあそれで！" }
+    ]
+  },
+
+  "clothing": [
+    { "scene": "昼間の観光", "icon": "☀️", "advice": "通気性の良い半袖・軽装。日差しが強いので帽子もあると安心です。" },
+    { "scene": "夜のお出かけ", "icon": "🌙", "advice": "羽織れるものを1枚。冷房対策・虫よけにも役立ちます。" },
+    { "scene": "寺院見学", "icon": "🛕", "advice": "肩や膝が隠れる服装を。サロン（腰布）を巻くのがマナーです。" },
+    { "scene": "ビーチ", "icon": "🏖️", "advice": "水着＋ラッシュガードなど、日焼け対策をしっかりと。" },
+    { "scene": "ヨガ", "icon": "🧘", "advice": "動きやすいストレッチ素材の服がおすすめです。" },
+    { "scene": "ショッピング", "icon": "🛍️", "advice": "歩きやすい靴と、荷物が入るバッグがあると便利です。" }
+  ],
+
+  "packingTip": "忘れ物がないか、出発前にチェックしてね！寺院では肌を覆う服装で訪れ、現地の文化を尊重しましょう。",
+
+  "packingList": [
+    {
+      "category": "MUST-HAVES｜必ず必要なもの",
+      "items": [
+        { "id": "passport-copy", "label": "パスポートのコピー3枚", "note": "現地で提出に使うため必ず用意してください", "highlight": true },
+        { "id": "passport", "label": "パスポート", "note": "残存期間が6ヶ月以上あるか確認" },
+        { "id": "cash", "label": "現金", "note": "両替は現地で／アメックスカードは使えない／スキミングに注意／屋台ではカード使用しないこと" },
+        { "id": "eticket", "label": "航空券（eチケット控え）" },
+        { "id": "evisa", "label": "e-VISA（電子ビザ）", "note": "印刷して持参＋スマホにも保存しておくと安心" },
+        { "id": "etax", "label": "e-観光税（電子観光税の納付証明）", "note": "印刷して持参＋スマホにも保存しておくと安心" },
+        { "id": "insurance", "label": "海外旅行保険の証書" },
+        { "id": "phone-charger", "label": "スマートフォン・充電器" },
+        { "id": "medicine", "label": "常備薬・処方箋" },
+        { "id": "contacts", "label": "コンタクトの予備", "note": "使用する方のみ" },
+        { "id": "sanitary", "label": "生理用品" },
+        { "id": "sunscreen", "label": "日焼け止め" },
+        { "id": "overnight-bag", "label": "一泊分の荷物が入るリュックかバッグ", "note": "※離島に移動の際に使います" },
+        { "id": "plug-adapter", "label": "変換プラグ（Cタイプ）・延長コード", "note": "約2m" },
+        { "id": "envelope", "label": "封筒", "note": "※両替したい現金を入れておいてください" }
+      ]
+    },
+    {
+      "category": "CLOTHING & PERSONAL ITEMS｜着替え類・身につけるもの",
+      "items": [
+        { "id": "clothes", "label": "着替え類（必要日数分）", "note": "ヨガ時のラフなズボンも" },
+        { "id": "underwear", "label": "下着・肌着", "note": "使い捨ても便利" },
+        { "id": "swimwear", "label": "水着", "note": "スポーツタイプがおすすめ" },
+        { "id": "rashguard", "label": "UV長袖ラッシュガード" },
+        { "id": "outerwear", "label": "羽織りもの", "note": "冷房・日差し対策に" },
+        { "id": "sunhat", "label": "帽子", "note": "日よけに／紐付きがおすすめ" },
+        { "id": "sunglasses", "label": "サングラス" }
+      ]
+    },
+    {
+      "category": "SHOES｜靴について",
+      "items": [
+        { "id": "sport-sandals", "label": "スポーツサンダル" },
+        { "id": "marine-shoes", "label": "マリンシューズ" }
+      ]
+    },
+    {
+      "category": "CONVENIENT & COMFORTABLE ITEMS｜便利・あると快適なもの",
+      "items": [
+        { "id": "water-bottle", "label": "ミニ水筒", "note": "あると便利" },
+        { "id": "ice-bag", "label": "水筒の氷を作る袋", "note": "100均で購入可" },
+        { "id": "swelling-care", "label": "むくみ対策グッズ", "note": "必要な方" },
+        { "id": "eco-bag", "label": "エコバッグ・ジッパー袋", "note": "濡れ物入れに" },
+        { "id": "shampoo", "label": "シャンプー類", "note": "海に行くことが多く、日本とは水質が違うため、普段使用しているものを持ってくるのがおすすめです" },
+        { "id": "neck-pillow", "label": "ネックピロー", "note": "飛行機で" },
+        { "id": "snacks", "label": "お菓子" },
+        { "id": "compression-bag", "label": "圧縮袋", "note": "衣類をコンパクトに収納" }
+      ]
+    },
+    {
+      "category": "OTHER MISCELLANEOUS｜その他いろいろ",
+      "items": [
+        { "id": "towel", "label": "タオル・バスタオル", "note": "ホテルにもあり" },
+        { "id": "toiletries", "label": "洗面用具・スキンケア用品・メイク道具" },
+        { "id": "book", "label": "筆記用具" },
+        { "id": "trash-bag", "label": "ビニール袋・ゴミ袋", "note": "濡れた物やゴミ用" },
+        { "id": "laundry-net", "label": "洗濯ネット", "note": "クリーニングに出す時に使います" },
+        { "id": "sanitizer", "label": "除菌グッズ", "note": "衛生用品が必要な方" },
+        { "id": "insect-repellent", "label": "虫除けスプレー", "note": "必要な方" },
+        { "id": "motion-sickness", "label": "酔い止め", "note": "水無しタイプがおすすめ" }
+      ]
+    }
+  ],
+
+  "itinerary": [
+    {
+      "date": "2026-08-13",
+      "day": "Day 1",
+      "title": "日本出発・バリ島到着",
+      "image": "day1-departure.jpg",
+      "events": ["日本出発", "シンガポール（乗り継ぎ）", "デンパサール到着", "ホテルへ"]
+    },
+    {
+      "date": "2026-08-14",
+      "day": "Day 2",
+      "title": "ウブド〜キンタマーニ〜寺院めぐり",
+      "image": "day2-ubud.jpg",
+      "events": ["ティルタウンプル寺院（沐浴）", "キンタマーニ高原", "コーヒー農園（ジャコウネコ）", "棚田カフェ", "ウブドで夕食", "ケチャックダンス鑑賞"]
+    },
+    {
+      "date": "2026-08-15",
+      "day": "Day 3",
+      "title": "ヨガ〜ショッピング〜マッサージ",
+      "image": "day3-yoga.jpg",
+      "events": ["朝ヨガ（The Yoga Barn）", "朝食", "アタ製品でお買い物", "昼食", "マッサージ", "夕食（タロウブド）"]
+    },
+    {
+      "date": "2026-08-16",
+      "day": "Day 4",
+      "title": "レンボンガン島〜ドリームビーチ",
+      "image": "day4-lembongan.jpg",
+      "events": ["レンボンガン島へ（フェリー）", "ダイビング", "マングローブ探索", "ドリームビーチ", "サンセットディナー"]
+    },
+    {
+      "date": "2026-08-17",
+      "day": "Day 5",
+      "title": "講座〜本土へ〜お買い物",
+      "image": "day5-nusadua.jpg",
+      "events": ["講座", "アルナでランチ", "フェリーで本土へ", "ジェンガラケラミック", "オレオレでお買い物", "夕食（ワルンラオタ）"]
+    },
+    {
+      "date": "2026-08-18",
+      "day": "Day 6",
+      "title": "ウルワツ〜帰国日",
+      "image": "day6-departure.jpg",
+      "events": ["朝食", "ランチ（マナ・ウルワツ）", "ウルワツ寺院", "オレオレでお買い物", "空港へ・帰国"]
+    }
+  ],
+
+  "hotels": [
+    {
+      "name": "THE BLUE PARROT VILLA（ザ・ブルー・パロット・ヴィラ）",
+      "image": "hotel-blue-parrot.jpg",
+      "feature": "緑に囲まれた、静かなヴィラタイプの宿泊施設です。8/13〜8/16の3泊はこちら。",
+      "location": "ウブドエリア",
+      "mapLat": -8.5069,
+      "mapLng": 115.2625
+    },
+    {
+      "name": "ARNA Suites and Ocean Lounge（アルナ スイーツ アンド オーシャンラウンジ）",
+      "image": "hotel-arna-bluelagoon.jpg",
+      "feature": "崖と海に囲まれた絶景の中、離島ならではの特別な世界観に浸れるオーシャンラウンジ。チュニガン島のブルーラグーン近くに佇み、インフィニティプールやデイベッドで、しばしの非日常を味わえます。ディナーは17:00〜22:00、海を眺めながらの食事体験も。8/16〜8/17の1泊はこちら。",
+      "location": "チュニガン島",
+      "mapLat": -8.6941,
+      "mapLng": 115.4547
+    },
+    {
+      "name": "Hotel Nikko Bali Benoa Beach（ホテル・ニッコー・バリ・ベノア・ビーチ）",
+      "image": "hotel-nusadua.jpg",
+      "feature": "白砂のビーチが目の前に広がる、リゾート感あふれるホテルです。8/17〜8/18の1泊はこちら。",
+      "location": "タンジュンブノア（ヌサドゥアエリア）",
+      "mapLat": -8.7583,
+      "mapLng": 115.2167
+    }
+  ],
+
+  "gourmet": [
+    { "name": "ナシゴレン", "image": "food-nasigoreng.jpg", "desc": "インドネシア風炒めご飯。バリの定番料理です。" },
+    { "name": "ミーゴレン", "image": "food-migoreng.jpg", "desc": "インドネシア風炒め麺。少し甘辛い味付けが特徴です。" },
+    { "name": "サテ", "image": "food-satay.jpg", "desc": "串焼き肉にピーナッツソースをかけた名物料理。" },
+    { "name": "バビグリン", "image": "food-babiguling.jpg", "desc": "バリ島名物の豚の丸焼き。香辛料の香りが食欲をそそります。" },
+    { "name": "トロピカルフルーツ", "image": "food-fruits.jpg", "desc": "マンゴスチンやドラゴンフルーツなど、南国フルーツも楽しみの一つ。" },
+    { "name": "バリコーヒー", "image": "food-coffee.jpg", "desc": "コーヒー農園で味わう、香り豊かな一杯。" }
+  ],
+
+  "trivia": [
+    "バリでは、物を渡すときは右手を使うのがマナーです（左手は不浄とされています）。",
+    "寺院に入る際は、肩や膝が隠れる服装にし、サロンを巻くのがマナーです。",
+    "道端のお供え物（チャナン）は踏まないように気をつけましょう。",
+    "水道水はそのまま飲まず、ミネラルウォーターを利用しましょう。",
+    "レストランやホテルではサービス料が含まれていることが多く、チップは必須ではありません。",
+    "バリの人の名前は、生まれた順番によって決まる伝統的な命名ルールがあります。",
+    "頭は神聖な部分とされているため、子どもであっても頭を撫でるのは控えましょう。"
+  ],
+
+  "baliStory": [
+    {
+      "image": "bali-story-1.jpg",
+      "text": "むかしむかし、約150万年前のことです。バリ島にはジャワ原人がやってきて、豊かな自然の中で人々が暮らし始めました。"
+    },
+    {
+      "image": "bali-story-2.jpg",
+      "text": "海を越えてヒンドゥー文化が伝わり、島の人たちの温かい心とひとつになりました。さらにジャワ島の王国からもたくさんの文化や芸術がやってきて、お寺やダンスが生まれました。"
+    },
+    {
+      "image": "bali-story-3.jpg",
+      "text": "時代が進み、オランダの支配や戦争の時期を乗り越えて、1945年にインドネシアは独立を果たします。"
+    },
+    {
+      "image": "bali-story-4.jpg",
+      "text": "やがて美しい自然の中に、洗練された素敵なリゾートが次々とつくられました。昔からの神聖な空気と、心地よいリゾートの快適さがひとつになったのです。今では世界中からポジティブな癒しを求めてたくさんの人が集まる、笑顔あふれる特別な場所になりました。"
+    }
+  ],
+
+  "routeMap": {
+    "description": "旅の道のりを地図で体験！日付を選ぶと、現在地が移動します。",
+    "legendIcons": { "flight": "✈️ 飛行機", "car": "🚗 車", "ferry": "⛴️ フェリー" },
+    "route": [
+      { "date": "2026-08-13", "label": "日本 → デンパサール", "place": "デンパサール", "transport": "flight" },
+      { "date": "2026-08-14", "label": "デンパサール → ウブド", "place": "ウブド", "transport": "car" },
+      { "date": "2026-08-15", "label": "ウブド周辺", "place": "ウブド周辺", "transport": "car" },
+      { "date": "2026-08-16", "label": "サヌール → レンボンガン島", "place": "レンボンガン島", "transport": "ferry" },
+      { "date": "2026-08-17", "label": "レンボンガン島 → ヌサドゥア", "place": "ヌサドゥア", "transport": "ferry" },
+      { "date": "2026-08-18", "label": "ヌサドゥア → 空港（車） → 日本", "place": "日本（帰国）", "transport": "flight" }
+    ]
+  },
+
+  "gallery": [
+    { "image": "gallery-bali-overview.jpg", "caption": "バリ島の全景" },
+    { "image": "gallery-rice-terrace.jpg", "caption": "美しい棚田" },
+    { "image": "gallery-kintamani.jpg", "caption": "キンタマーニ高原" },
+    { "image": "gallery-tirta-empul.jpg", "caption": "ティルタウンプル寺院" },
+    { "image": "gallery-coffee-plantation.jpg", "caption": "コーヒー農園" },
+    { "image": "gallery-kecak-dance.jpg", "caption": "ケチャックダンス" },
+    { "image": "gallery-lembongan.jpg", "caption": "レンボンガン島" },
+    { "image": "gallery-dream-beach.jpg", "caption": "ドリームビーチ" },
+    { "image": "gallery-mangrove.jpg", "caption": "マングローブ" },
+    { "image": "gallery-market.jpg", "caption": "地元の市場" },
+    { "image": "gallery-sunset.jpg", "caption": "バリの夕日" },
+    { "image": "gallery-temple.jpg", "caption": "寺院の風景" },
+    { "image": "gallery-yoga-view.jpg", "caption": "インド洋の美しさと共に" },
+    { "image": "gallery-swing.jpg", "caption": "海を望むブランコにて" },
+    { "image": "gallery-blue-water.jpg", "caption": "透き通るコバルトブルーの海" },
+    { "image": "gallery-smoothie.jpg", "caption": "南国フルーツのスムージー" },
+    { "image": "gallery-welcome-drink.jpg", "caption": "ウェルカムドリンク" },
+    { "image": "gallery-snorkeling.jpg", "caption": "シュノーケリングのひととき" },
+    { "image": "gallery-villa-pool.jpg", "caption": "緑に囲まれたヴィラのプール" },
+    { "image": "gallery-temple-group.jpg", "caption": "寺院にて、みんなで記念撮影" }
+  ],
+
+  "spots": [
+    {
+      "name": "キンタマーニ高原",
+      "image": "gallery-kintamani.jpg",
+      "desc": "活火山アグン山を望む高原地帯。雄大なバトゥール山とバトゥール湖の景色を眺めながら、絶景ランチを楽しめるスポットとしても人気です。"
+    },
+    {
+      "name": "サリレストラン",
+      "image": "spot-sari-kintamani.jpg",
+      "desc": "キンタマーニ高原を一望できるレストラン。アーチ越しに広がる雄大な景色を眺めながら、ゆったりとした時間を過ごせます。"
+    },
+    {
+      "name": "ジャコウネココーヒー",
+      "image": "spot-luwak-coffee.jpg",
+      "desc": "ジャコウネコ（ルアック）が食べたコーヒー豆から作られる、世界的に希少な「コピ・ルアック」。コーヒー農園では試飲もでき、独特のまろやかな味わいを楽しめます。"
+    },
+    {
+      "name": "ヨガバーン（The Yoga Barn）",
+      "image": "day3-yoga.jpg",
+      "desc": "ウブドを代表する人気ヨガスタジオ。緑に囲まれた開放的な空間で、心身をリセットする朝ヨガの時間を過ごせます。"
+    },
+    {
+      "name": "ケチャックダンス",
+      "image": "spot-kecak-dance.jpg",
+      "desc": "ユネスコ無形文化遺産にも登録されている、バリ島を代表する伝統舞踊。楽器を使わず、大勢の男性が「チャッ、チャッ」という掛け声を重ねるコーラスに合わせて、ラーマーヤナ物語を演じます。灯りに照らされた幻想的な雰囲気の中で鑑賞するひとときです。"
+    },
+    {
+      "name": "ティルタウンプル寺院",
+      "image": "gallery-tirta-empul.jpg",
+      "desc": "聖なる湧き水が湧く、バリ・ヒンドゥー教の沐浴寺院。現地の人々にならって、身を清める「ムルカット」を体験できます。"
+    },
+    {
+      "name": "レンボンガン島",
+      "image": "gallery-lembongan.jpg",
+      "desc": "サヌールから船で渡る、静かで美しい離島。透明度の高い海でのシュノーケリングやダイビングが楽しめます。"
+    },
+    {
+      "name": "マングローブ",
+      "image": "gallery-mangrove.jpg",
+      "desc": "レンボンガン島に広がるマングローブ林。入り組んだ水路をボートで巡る、非日常的な景色が広がります。"
+    },
+    {
+      "name": "ドリームビーチ",
+      "image": "gallery-dream-beach.jpg",
+      "desc": "レンボンガン島にある、白い砂浜と迫力ある波が魅力のビーチ。その名の通り、夢のような景色が広がります。"
+    },
+    {
+      "name": "アタ製品",
+      "image": "spot-ata.jpg",
+      "desc": "アタと呼ばれるつる植物を編んで作る、バリの伝統的な手工芸品。バッグやかごなど、丈夫で温かみのあるデザインがお土産として人気です。"
+    },
+    {
+      "name": "更紗（サラサ）",
+      "image": "spot-batik-sarasa.jpg",
+      "desc": "バリ島に受け継がれる「更紗（サラサ）」の文化は、ろうけつ染めの「バティック」として今も息づいています。花や葉、鳥、幾何学模様などをあしらった華やかな柄が特徴。サロンやストール、ワンピース、テーブルクロス、バッグなど様々な形で販売されており、バリ旅行のお土産としても人気です。"
+    },
+    {
+      "name": "ジェンガラケラミック",
+      "image": "spot-jenggala.jpg",
+      "desc": "バリを代表する陶器（セラミック）ブランド。ひとつひとつ手作業で仕上げられる、南国らしい色使いの食器が並びます。工房の様子を見学できるのも魅力で、自分用にもお土産にも人気です。"
+    },
+    {
+      "name": "オレオレショッピングセンター",
+      "image": "market.jpg",
+      "desc": "「オレオレ（Oleh-oleh）」とはインドネシア語で「お土産」の意味。お菓子やコーヒー、雑貨まで、まとめてお土産探しができるショッピングスポットです。"
+    },
+    {
+      "name": "ウブドの街",
+      "image": "gallery-rice-terrace.jpg",
+      "desc": "美しい棚田とアートの村として知られるウブド。ギャラリーやおしゃれなカフェが点在し、散策するだけでも楽しい、バリ文化の中心地です。"
+    }
+  ],
+
+  "faq": [
+    { "q": "服装で気をつけることはありますか？", "a": "寺院見学の際は肩・膝が隠れる服装が必要です。サロンは現地でレンタル・購入も可能です。" },
+    { "q": "両替はどこでするのがいいですか？", "a": "両替は現地で行いますので、日本国内での事前準備は必要ありません。空港よりも街中の公認両替所の方がレートが良いことが多いです。" },
+    { "q": "水道水は飲めますか？", "a": "飲めません。ミネラルウォーターをご利用ください。歯磨きの際も注意しましょう。" },
+    { "q": "チップは必要ですか？", "a": "必須ではありません。サービス料が含まれていることが多いです。ただ、ガイドさんやドライバーさんなど、特にお世話になったなと感じた時には、感謝の気持ちとして少額を渡すと、より温かい交流になるかもしれません。" },
+    { "q": "Wi-Fiは使えますか？", "a": "ホテルやレストランでは概ね利用可能です。移動中の利用にはeSIMがおすすめです。" },
+    { "q": "道に迷ってしまったら、どうすればいいですか？", "a": "慌てずに、近くのタクシーやドライバーにホテルの名前を伝えましょう。「Tolong antar ke Hotel ○○（トロン・アンタール・ク・ホテル○○＝○○ホテルまでお願いします）」と伝えれば、多くの場合送ってもらえます。ホテルの名刺やスクリーンショットを携帯・写真に保存しておくと、言葉が通じなくても見せるだけで伝わり安心です。困ったときは「Tolong bantu saya（トロン・バントゥ・サヤ＝助けてください）」も覚えておきましょう。" }
+  ],
+
+  "lineChapter": {
+    "subtitle": "SATORU会",
+    "lead": "旅行中も、毎日更新される「今日のラッキーオパ」で、バリ島での一日にもヒントを添えて活かしましょう",
+    "featureTitle": "本日のラッキーオパ🌈",
+    "featureNote": "毎日更新中",
+    "linkLabel": "今日のラッキーオパを見る",
+    "linkUrl": "https://docs.google.com/document/d/12hnwJTUJrZEo93FGqcXeLPU4qUwSVeqL5aiFkra5g_E/mobilebasic"
+  },
+
+  "restaurants": [
+    { "name": "バリ・トロピカル", "image": "restaurant-bali-tropical.jpg", "desc": "南国らしい開放的な雰囲気の中で食事が楽しめるお店です。" },
+    { "name": "TIS CAFE", "image": "restaurant-tis-cafe.jpg", "desc": "気軽に立ち寄れるおしゃれなカフェ。休憩やランチにぴったりです。" },
+    { "name": "セガラ・ウィンドウ・コーヒー・プランテーション", "image": "restaurant-segara-window.jpg", "desc": "コーヒー農園に併設されたレストラン。景色を眺めながら食事とコーヒーを楽しめます。" },
+    { "name": "グランド・チャンピオン・サリ・レストラン", "image": "restaurant-grand-champion-sari.jpg", "desc": "団体での食事にも対応する、ゆったりとした造りのレストランです。" },
+    { "name": "タロ・ウブド", "image": "restaurant-taro-ubud.jpg", "desc": "ウブドエリアで夕食に利用予定のレストランです（Day3）。" },
+    { "name": "アラナ", "image": "restaurant-arna.jpg", "desc": "レンボンガン島エリアでランチに利用予定のレストランです（Day5）。" },
+    { "name": "マナ・ウルワツ・レストラン・アンド・バー", "image": "restaurant-mana-uluwatu.jpg", "desc": "ウルワツエリアでランチに利用予定のレストラン＆バーです（Day6）。海を望むロケーションが魅力です。" },
+    { "name": "Warung Laota", "image": "restaurant-warung-laota.jpg", "desc": "バリで大人気の中華料理店。名物の香港粥や、新鮮な海鮮料理などが楽しめます。夕食に利用予定です（Day5）。" }
+  ],
+
+  "ending": {
+    "title": "BALI TOUR 2026",
+    "message": "最高の思い出を一緒につくりましょう！",
+    "sub": "夕日の向こうへ、旅は続きます。"
+  }
+}
