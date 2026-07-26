@@ -5,8 +5,8 @@
     "producer": "㈱星の降る里プロデュース",
     "tourName": "BALI TOUR 2026",
     "subtitle": "最高の思い出を一緒につくりましょう！",
-    "startDate": "2026-08-13",
-    "endDate": "2026-08-18",
+    "startDate": "2026-08-18",
+    "endDate": "2026-08-23",
     "departureCity": "日本",
     "destinationCity": "バリ島（デンパサール）",
     "transitCity": "シンガポール",
@@ -246,62 +246,70 @@
 
   "itinerary": [
     {
-      "date": "2026-08-13",
+      "date": "2026-08-18",
       "day": "Day 1",
       "title": "日本出発・バリ島到着",
       "image": "day1-departure.jpg",
-      "events": ["日本出発", "シンガポール（乗り継ぎ）", "デンパサール到着", "ホテルへ"]
+      "events": ["日本出発", "シンガポール（乗り継ぎ）", "デンパサール到着", "ホテルへ移動", "ミーティング＆夕食"]
     },
     {
-      "date": "2026-08-14",
+      "date": "2026-08-19",
       "day": "Day 2",
-      "title": "ウブド〜キンタマーニ〜寺院めぐり",
-      "image": "day2-ubud.jpg",
-      "events": ["ティルタウンプル寺院（沐浴）", "キンタマーニ高原", "コーヒー農園（ジャコウネコ）", "棚田カフェ", "ウブドで夕食", "ケチャックダンス鑑賞"]
-    },
-    {
-      "date": "2026-08-15",
-      "day": "Day 3",
-      "title": "ヨガ〜ショッピング〜マッサージ",
-      "image": "day3-yoga.jpg",
-      "events": ["朝ヨガ（The Yoga Barn）", "朝食", "アタ製品でお買い物", "昼食", "マッサージ", "夕食（タロウブド）"]
-    },
-    {
-      "date": "2026-08-16",
-      "day": "Day 4",
       "title": "レンボンガン島〜ドリームビーチ",
       "image": "day4-lembongan.jpg",
-      "events": ["レンボンガン島へ（フェリー）", "ダイビング", "マングローブ探索", "ドリームビーチ", "サンセットディナー"]
+      "events": ["フェリーでレンボンガン島へ", "ドリームビーチ", "ランチ（cafe pandan）", "マングローブ", "夕食"]
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-20",
+      "day": "Day 3",
+      "title": "レンボンガン島でシュノーケル",
+      "image": "gallery-snorkeling.jpg",
+      "events": ["朝食", "シュノーケル", "昼食", "フリータイム", "夕食"]
+    },
+    {
+      "date": "2026-08-21",
+      "day": "Day 4",
+      "title": "講座〜ARNA Suitesへ移動",
+      "image": "hotel-arna-bluelagoon.jpg",
+      "events": ["講座", "昼食（みんなで）", "ARNA Suites and Ocean Loungeへ移動", "夕食"]
+    },
+    {
+      "date": "2026-08-22",
       "day": "Day 5",
-      "title": "講座〜本土へ〜お買い物",
-      "image": "day5-nusadua.jpg",
-      "events": ["講座", "アルナでランチ", "フェリーで本土へ", "ジェンガラケラミック", "オレオレでお買い物", "夕食（ワルンラオタ）"]
+      "title": "フラダンス〜本土へ〜ホテルニッコー",
+      "image": "hotel-nusadua.jpg",
+      "events": ["フラダンス", "朝食", "講座", "ランチ", "フェリーで本土へ", "Hotel Nikko Bali Benoa Beachへ", "夕食"]
     },
     {
-      "date": "2026-08-18",
+      "date": "2026-08-23",
       "day": "Day 6",
-      "title": "ウルワツ〜帰国日",
+      "title": "帰国日",
       "image": "day6-departure.jpg",
-      "events": ["朝食", "ランチ（マナ・ウルワツ）", "ウルワツ寺院", "オレオレでお買い物", "空港へ・帰国"]
+      "events": ["朝食", "空港へ", "帰国"]
     }
   ],
 
   "hotels": [
     {
-      "name": "THE BLUE PARROT VILLA（ザ・ブルー・パロット・ヴィラ）",
-      "image": "hotel-blue-parrot.jpg",
-      "feature": "緑に囲まれた、静かなヴィラタイプの宿泊施設です。8/13〜8/16の3泊はこちら。",
-      "location": "ウブドエリア",
-      "mapLat": -8.5069,
-      "mapLng": 115.2625
+      "name": "Grand Palace Hotel Sanur - Bali（グランド パレス ホテル サヌール - バリ）",
+      "image": "hotel-grand-palace-sanur.jpg",
+      "feature": "サヌールエリアに位置するホテル。バリ島到着後、最初の一泊はこちらで過ごします。8/18〜8/19の1泊はこちら。",
+      "location": "サヌールエリア",
+      "mapLat": -8.6905,
+      "mapLng": 115.2624
+    },
+    {
+      "name": "Nyuh Gading HILL（ニュ・ガディン・ヒル）",
+      "image": "hotel-nyuh-gading-hill.jpg",
+      "feature": "レンボンガン島エリアで過ごす連泊はこちら。シュノーケルや島時間をゆったり楽しめます。8/19〜8/21の2泊はこちら。",
+      "location": "レンボンガン島エリア",
+      "mapLat": -8.6960,
+      "mapLng": 115.4530
     },
     {
       "name": "ARNA Suites and Ocean Lounge（アルナ スイーツ アンド オーシャンラウンジ）",
       "image": "hotel-arna-bluelagoon.jpg",
-      "feature": "崖と海に囲まれた絶景の中、離島ならではの特別な世界観に浸れるオーシャンラウンジ。チュニガン島のブルーラグーン近くに佇み、インフィニティプールやデイベッドで、しばしの非日常を味わえます。ディナーは17:00〜22:00、海を眺めながらの食事体験も。8/16〜8/17の1泊はこちら。",
+      "feature": "崖と海に囲まれた絶景の中、離島ならではの特別な世界観に浸れるオーシャンラウンジ。チュニガン島のブルーラグーン近くに佇み、インフィニティプールやデイベッドで、しばしの非日常を味わえます。ディナーは17:00〜22:00、海を眺めながらの食事体験も。8/21〜8/22の1泊はこちら。",
       "location": "チュニガン島",
       "mapLat": -8.6941,
       "mapLng": 115.4547
@@ -309,7 +317,7 @@
     {
       "name": "Hotel Nikko Bali Benoa Beach（ホテル・ニッコー・バリ・ベノア・ビーチ）",
       "image": "hotel-nusadua.jpg",
-      "feature": "白砂のビーチが目の前に広がる、リゾート感あふれるホテルです。8/17〜8/18の1泊はこちら。",
+      "feature": "白砂のビーチが目の前に広がる、リゾート感あふれるホテルです。8/22〜8/23の1泊はこちら。",
       "location": "タンジュンブノア（ヌサドゥアエリア）",
       "mapLat": -8.7583,
       "mapLng": 115.2167
@@ -358,12 +366,12 @@
     "description": "旅の道のりを地図で体験！日付を選ぶと、現在地が移動します。",
     "legendIcons": { "flight": "✈️ 飛行機", "car": "🚗 車", "ferry": "⛴️ フェリー" },
     "route": [
-      { "date": "2026-08-13", "label": "日本 → デンパサール", "place": "デンパサール", "transport": "flight" },
-      { "date": "2026-08-14", "label": "デンパサール → ウブド", "place": "ウブド", "transport": "car" },
-      { "date": "2026-08-15", "label": "ウブド周辺", "place": "ウブド周辺", "transport": "car" },
-      { "date": "2026-08-16", "label": "サヌール → レンボンガン島", "place": "レンボンガン島", "transport": "ferry" },
-      { "date": "2026-08-17", "label": "レンボンガン島 → ヌサドゥア", "place": "ヌサドゥア", "transport": "ferry" },
-      { "date": "2026-08-18", "label": "ヌサドゥア → 空港（車） → 日本", "place": "日本（帰国）", "transport": "flight" }
+      { "date": "2026-08-18", "label": "日本 → デンパサール", "place": "デンパサール", "transport": "flight" },
+      { "date": "2026-08-19", "label": "サヌール → レンボンガン島", "place": "レンボンガン島", "transport": "ferry" },
+      { "date": "2026-08-20", "label": "レンボンガン島周辺", "place": "レンボンガン島周辺", "transport": "car" },
+      { "date": "2026-08-21", "label": "レンボンガン島 → チュニガン島", "place": "チュニガン島", "transport": "car" },
+      { "date": "2026-08-22", "label": "チュニガン島 → ヌサドゥア", "place": "ヌサドゥア", "transport": "ferry" },
+      { "date": "2026-08-23", "label": "ヌサドゥア → 空港（車） → 日本", "place": "日本（帰国）", "transport": "flight" }
     ]
   },
 
