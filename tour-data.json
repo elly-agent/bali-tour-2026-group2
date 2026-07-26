@@ -257,35 +257,35 @@
       "day": "Day 2",
       "title": "レンボンガン島〜ドリームビーチ",
       "image": "day4-lembongan.jpg",
-      "events": ["フェリーでレンボンガン島へ", "ドリームビーチ", "ランチ（cafe pandan）", "マングローブ", "夕食"]
+      "events": ["フェリーでレンボンガン島へ", "ドリームビーチ", "ランチ（cafe pandan）", "マングローブ", "夕食（Casa Bambù Cantina）"]
     },
     {
       "date": "2026-08-20",
       "day": "Day 3",
       "title": "レンボンガン島でシュノーケル",
       "image": "gallery-snorkeling.jpg",
-      "events": ["朝食", "シュノーケル", "昼食", "フリータイム", "夕食"]
+      "events": ["朝食", "シュノーケル", "昼食（ワレワレレストラン）", "フリータイム", "夕食（Planet Beach Warung）"]
     },
     {
       "date": "2026-08-21",
       "day": "Day 4",
       "title": "講座〜ARNA Suitesへ移動",
       "image": "hotel-arna-bluelagoon.jpg",
-      "events": ["講座", "昼食（みんなで）", "ARNA Suites and Ocean Loungeへ移動", "夕食"]
+      "events": ["講座", "昼食（SUKU Beach Club）", "ARNA Suites and Ocean Loungeへ移動", "夕食"]
     },
     {
       "date": "2026-08-22",
       "day": "Day 5",
       "title": "フラダンス〜本土へ〜ホテルニッコー",
       "image": "hotel-nusadua.jpg",
-      "events": ["フラダンス", "朝食", "講座", "ランチ", "フェリーで本土へ", "Hotel Nikko Bali Benoa Beachへ", "夕食"]
+      "events": ["フラダンス", "朝食", "講座", "ランチ", "フェリーで本土へ", "ジェンガラケラミックでお買い物", "夕食（Taverna Toscana Bali）", "Hotel Nikko Bali Benoa Beachへ"]
     },
     {
       "date": "2026-08-23",
       "day": "Day 6",
       "title": "帰国日",
       "image": "day6-departure.jpg",
-      "events": ["朝食", "空港へ", "帰国"]
+      "events": ["朝食", "ランチ（マナ・ウルワツ・レストラン）", "ウルワツ寺院", "オレオレでお買い物", "空港へ・帰国"]
     }
   ],
 
@@ -490,14 +490,13 @@
   },
 
   "restaurants": [
-    { "name": "バリ・トロピカル", "image": "restaurant-bali-tropical.jpg", "desc": "南国らしい開放的な雰囲気の中で食事が楽しめるお店です。" },
-    { "name": "TIS CAFE", "image": "restaurant-tis-cafe.jpg", "desc": "気軽に立ち寄れるおしゃれなカフェ。休憩やランチにぴったりです。" },
-    { "name": "セガラ・ウィンドウ・コーヒー・プランテーション", "image": "restaurant-segara-window.jpg", "desc": "コーヒー農園に併設されたレストラン。景色を眺めながら食事とコーヒーを楽しめます。" },
-    { "name": "グランド・チャンピオン・サリ・レストラン", "image": "restaurant-grand-champion-sari.jpg", "desc": "団体での食事にも対応する、ゆったりとした造りのレストランです。" },
-    { "name": "タロ・ウブド", "image": "restaurant-taro-ubud.jpg", "desc": "ウブドエリアで夕食に利用予定のレストランです（Day3）。" },
-    { "name": "アラナ", "image": "restaurant-arna.jpg", "desc": "レンボンガン島エリアでランチに利用予定のレストランです（Day5）。" },
-    { "name": "マナ・ウルワツ・レストラン・アンド・バー", "image": "restaurant-mana-uluwatu.jpg", "desc": "ウルワツエリアでランチに利用予定のレストラン＆バーです（Day6）。海を望むロケーションが魅力です。" },
-    { "name": "Warung Laota", "image": "restaurant-warung-laota.jpg", "desc": "バリで大人気の中華料理店。名物の香港粥や、新鮮な海鮮料理などが楽しめます。夕食に利用予定です（Day5）。" }
+    { "name": "cafe pandan", "image": "restaurant-cafepandan.jpg", "desc": "レンボンガン島エリアで昼食に利用予定のカフェです（Day2）。" },
+    { "name": "Casa Bambù Cantina", "image": "restaurant-casa-bambu.jpg", "desc": "レンボンガン島エリアで夕食に利用予定のレストランです（Day2）。" },
+    { "name": "ワレワレレストラン", "image": "restaurant-wareware.jpg", "desc": "レンボンガン島エリアで昼食に利用予定のレストラン。海を望むテラス席が魅力です（Day3）。" },
+    { "name": "Planet Beach Warung", "image": "restaurant-planet-beach-warung.jpg", "desc": "レンボンガン島エリアで夕食に利用予定のレストランです（Day3）。" },
+    { "name": "SUKU Beach Club", "image": "restaurant-suku-beach-club.jpg", "desc": "チュニガン島エリアで昼食に利用予定のビーチクラブです（Day4）。" },
+    { "name": "Taverna Toscana Bali", "image": "restaurant-taverna-toscana.jpg", "desc": "本土エリアで夕食に利用予定のレストラン。イタリアンが楽しめます（Day5）。" },
+    { "name": "マナ・ウルワツ・レストラン・アンド・バー", "image": "restaurant-mana-uluwatu.jpg", "desc": "ウルワツエリアでランチに利用予定のレストラン＆バーです（Day6）。海を望むロケーションが魅力です。" }
   ],
 
   "ending": {
