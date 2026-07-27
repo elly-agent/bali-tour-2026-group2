@@ -71,10 +71,11 @@
     { "id": "currency", "number": 14, "title": "通貨 〜ルピア〜", "type": "currency" },
     { "id": "bargain", "number": 15, "title": "値段交渉を楽しもう", "type": "bargain" },
     { "id": "clothing", "number": 16, "title": "服装", "type": "clothing" },
-    { "id": "trivia", "number": 17, "title": "バリ豆知識", "type": "trivia" },
-    { "id": "faq", "number": 18, "title": "よくある質問", "type": "faq" },
-    { "id": "packing", "number": 19, "title": "持ち物チェックリスト", "type": "checklist" },
-    { "id": "line", "number": 20, "title": "バリでもチェック！ラッキーオパ", "type": "line" }
+    { "id": "marine-sports", "number": 17, "title": "マリンスポーツを楽しむ", "type": "marine-sports" },
+    { "id": "trivia", "number": 18, "title": "バリ豆知識", "type": "trivia" },
+    { "id": "faq", "number": 19, "title": "よくある質問", "type": "faq" },
+    { "id": "packing", "number": 20, "title": "持ち物チェックリスト", "type": "checklist" },
+    { "id": "line", "number": 21, "title": "バリでもチェック！ラッキーオパ", "type": "line" }
   ],
 
   "worldMap": {
@@ -177,6 +178,7 @@
   "seaPlayTips": {
     "title": "海で遊ぶときの心構え",
     "lead": "シュノーケリングなど、海で過ごす時間が長い旅だからこそ、心と体の準備をしておきましょう。",
+    "creditUrl": "https://mail.google.com/mail/u/1?ui=2&ik=33ec60e772&attid=0.1&permmsgid=msg-f:1871840661601298320&th=19fa1d2a0ee0a790&view=att&zw&disp=inline",
     "image": "sea-play-tips.jpg",
     "items": [
       { "title": "体力配分を意識する", "text": "シュノーケリングは想像以上に体力を使います。ずっと全力で泳ぐのではなく、こまめに浮いて休む・平らな場所で一息つくなど、ペース配分を意識しましょう。「疲れる前に休む」がコツです。" },

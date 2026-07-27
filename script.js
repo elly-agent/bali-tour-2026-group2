@@ -675,6 +675,9 @@ function renderSeaPlayTips(data) {
       "<span class='sea-tip-item-text'>" + item.text + "</span>";
     list.appendChild(card);
   });
+
+  const creditLink = document.getElementById("marine-sports-credit-link");
+  if (creditLink && tips.creditUrl) creditLink.href = tips.creditUrl;
 }
 
 // --- Chapter 9: 持ち物チェックリスト（ローカル保存対応） ---
