@@ -963,18 +963,13 @@ ul { list-style: none; margin: 0; padding: 0; }
 }
 .slide[data-type="gourmet-gram"] .chapter-lead { color: rgba(255,255,255,.85); }
 
-.gg-stories-row { display: flex; flex-wrap: wrap; gap: 14px; padding: 4px 0 var(--space-m); justify-content: center; }
-.gg-story { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 0 0 auto; }
-.gg-story-ring {
-  width: 58px; height: 58px; border-radius: 50%;
-  background: conic-gradient(from 180deg, var(--gg-gold), #fff, var(--gg-gold));
-  display: flex; align-items: center; justify-content: center; padding: 2.5px;
+/* ボタンと誤解されないよう、押せる要素ではないことが一目でわかる、
+   線画だけのシンプルなバリ風の飾り（ヤシの木・太陽・波） */
+.gg-deco-illustration {
+  display: block; width: 200px; max-width: 55%; height: auto;
+  margin: 4px auto var(--space-m); color: var(--gg-gold); opacity: .8;
+  pointer-events: none;
 }
-.gg-story-ring-inner {
-  width: 100%; height: 100%; border-radius: 50%; background: var(--gg-red-deep);
-  display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
-}
-.gg-story-label { font-size: .68rem; color: rgba(255,255,255,.9); font-weight: 600; }
 
 .gg-composer { background: var(--gg-card); border-radius: 20px; padding: 18px; box-shadow: 0 14px 32px rgba(0,0,0,.28); margin-bottom: var(--space-m); }
 .gg-avatar {

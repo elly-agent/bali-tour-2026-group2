@@ -731,15 +731,6 @@ function initGourmetGram(data) {
   if (savedName) nameInput.value = savedName;
   nameInput.addEventListener("input", () => localStorage.setItem(GG_NAME_KEY, nameInput.value.trim()));
 
-  const storiesRow = document.getElementById("gg-stories-row");
-  gg.tags.forEach((tag) => {
-    const story = el("div", "gg-story");
-    story.innerHTML =
-      "<div class='gg-story-ring'><div class='gg-story-ring-inner'>" + tag.emoji + "</div></div>" +
-      "<span class='gg-story-label'>" + tag.label + "</span>";
-    storiesRow.appendChild(story);
-  });
-
   const moodRow = document.getElementById("gg-mood-row");
   gg.moods.forEach((mood) => {
     const btn = el("button", "gg-mood-chip");
