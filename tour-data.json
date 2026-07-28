@@ -196,7 +196,7 @@
     "lead": "投稿は自動でみんなの画面に反映されます（約30〜60秒ごとに更新）",
     "moods": [
       { "id": "yummy", "emoji": "😋", "label": "美味しい！" },
-      { "id": "again", "emoji": "🔁", "label": "また食べたい！" },
+      { "id": "again", "emoji": "😍", "label": "また食べたい！" },
       { "id": "bali", "emoji": "🌴", "label": "バリの味！" },
       { "id": "strange", "emoji": "🤔", "label": "不思議な味！" },
       { "id": "spicy", "emoji": "🌶️", "label": "ピリ辛♪" }
