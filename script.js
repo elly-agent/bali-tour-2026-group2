@@ -1515,6 +1515,10 @@ async function ggSavePdf(scope) {
   // そのタブへ表示する。バリ旅グラムのタブ自体は残るので、タブを切り替えれば戻れる
   const previewWindow = window.open("", "_blank");
 
+  // スマホはPDFが開いた瞬間にそちらのタブへ切り替わってしまい、あとから案内を
+  // 出しても気づいてもらえないため、保存ボタンを押した直後（作成中）に先に案内を出しておく
+  document.getElementById("gg-save-guide").classList.remove("hidden");
+
   btn.disabled = true;
   btn.textContent = "作成中…（写真の枚数によって少し時間がかかります）";
   try {
@@ -1534,14 +1538,13 @@ async function ggSavePdf(scope) {
         previewOk = false;
       }
     }
-    if (previewOk) {
-      document.getElementById("gg-save-guide").classList.remove("hidden");
-    } else {
+    if (!previewOk) {
       if (previewWindow && !previewWindow.closed) previewWindow.close();
       doc.save(filename);
     }
   } catch (e) {
     if (previewWindow) previewWindow.close();
+    document.getElementById("gg-save-guide").classList.add("hidden");
     window.alert("PDFの作成に失敗しました。通信環境の良い場所でもう一度お試しください。");
   } finally {
     btn.disabled = false;
