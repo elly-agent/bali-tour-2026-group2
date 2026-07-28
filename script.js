@@ -1118,7 +1118,7 @@ function ggLoadPdfLibs() {
   if (ggLibsLoadPromise) return ggLibsLoadPromise;
   ggLibsLoadPromise = Promise.all([
     window.html2canvas ? Promise.resolve() : ggLoadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"),
-    (window.jspdf && window.jspdf.jsPDF) ? Promise.resolve() : ggLoadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"),
+    (window.jspdf && window.jspdf.jsPDF) ? Promise.resolve() : ggLoadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"),
   ]);
   return ggLibsLoadPromise;
 }
