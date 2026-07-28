@@ -761,8 +761,8 @@ function initGourmetGram(data) {
   document.getElementById("gg-photo-input").addEventListener("change", ggHandlePhotoSelected);
   document.getElementById("gg-brightness-slider").addEventListener("input", ggUpdateBrightnessPreview);
   document.getElementById("gg-brightness-slider").addEventListener("change", ggUpdateBrightnessPreview);
-  document.getElementById("gg-brightness-skip").addEventListener("click", () => ggConfirmBrightness(false));
-  document.getElementById("gg-brightness-apply").addEventListener("click", () => ggConfirmBrightness(true));
+  document.getElementById("gg-brightness-skip").addEventListener("click", ggConfirmBrightness);
+  document.getElementById("gg-brightness-apply").addEventListener("click", ggConfirmBrightness);
   document.getElementById("gg-submit-btn").addEventListener("click", ggSubmitPost);
   document.getElementById("gg-cancel-edit-btn").addEventListener("click", ggCancelEdit);
   document.getElementById("gg-save-mine-btn").addEventListener("click", () => ggSavePdf("mine"));
@@ -874,15 +874,13 @@ function ggUpdateBrightnessPreview() {
   if (thumb) thumb.src = adjusted.toDataURL("image/jpeg", 0.75);
 }
 
-function ggConfirmBrightness(apply) {
-  if (apply && ggState.photoBaseCanvas) {
+// どちらのボタンを押しても、今スライダーで見えている明るさをそのまま確定する
+// （スライダーに触れていなければ50%＝変化なしのままなので、結果的に元の写真になる）
+function ggConfirmBrightness() {
+  if (ggState.photoBaseCanvas) {
     const slider = document.getElementById("gg-brightness-slider");
     const brightnessPercent = 50 + Number(slider.value);
     ggState.photoBaseCanvas = ggBrightnessCanvas(ggState.photoBaseCanvas, brightnessPercent);
-  } else if (!apply && ggState.photoPreviewCanvas) {
-    // 「そのままでOK」を選んだ場合は、プレビュー中に動かしたサムネイルを元の写真に戻す
-    const thumb = document.querySelector("#gg-photo-drop .gg-photo-drop-thumb");
-    if (thumb) thumb.src = ggState.photoPreviewCanvas.toDataURL("image/jpeg", 0.7);
   }
   document.getElementById("gg-brightness-popup").classList.add("hidden");
 }
