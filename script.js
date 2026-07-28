@@ -1456,6 +1456,37 @@ async function ggBuildPdf(posts, title) {
   return doc;
 }
 
+// ブラウザ純正のPDFビューアには「戻る」ボタンを追加できないため、
+// 開いたタブの中に「← 戻る」ボタン付きの簡単な枠を用意し、その中にPDFを表示する。
+// 「戻る」はこのタブ自体を閉じる動作にすることで、初めての人でも迷わず操作できるようにする
+function ggOpenPdfPreview(win, blobUrl, filename) {
+  const escapedTitle = ggEscapeHtml(filename);
+  const html =
+    "<!doctype html><html lang='ja'><head><meta charset='utf-8'><title>" + escapedTitle + "</title>" +
+    "<style>" +
+    "html,body{margin:0;padding:0;height:100%;background:#2B211D;font-family:-apple-system,'Hiragino Sans','Yu Gothic','Segoe UI',sans-serif;}" +
+    ".gg-pdf-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:linear-gradient(135deg,#C74B3F,#7A2321);flex-wrap:wrap;}" +
+    ".gg-pdf-bar button{border:none;border-radius:999px;padding:10px 18px;font-weight:700;font-size:.92rem;background:#fff;color:#A6332E;cursor:pointer;}" +
+    ".gg-pdf-bar a{color:#fff;font-size:.82rem;text-decoration:underline;}" +
+    ".gg-pdf-bar span{color:#fff;font-size:.8rem;opacity:.85;}" +
+    "iframe{width:100%;height:calc(100% - 54px);border:none;display:block;background:#fff;}" +
+    "</style></head><body>" +
+    "<div class='gg-pdf-bar'>" +
+    "<button id='gg-pdf-back' type='button'>← バリ旅グラムに戻る</button>" +
+    "<span>保存が終わったら押してください</span>" +
+    "<a id='gg-pdf-dl' download='" + escapedTitle + "'>うまく表示されない場合はこちら（ダウンロード）</a>" +
+    "</div>" +
+    "<iframe src='" + blobUrl + "'></iframe>" +
+    "<script>document.getElementById('gg-pdf-back').addEventListener('click', function(){ window.close(); });</" + "script>" +
+    "</body></html>";
+
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  const dlLink = win.document.getElementById("gg-pdf-dl");
+  if (dlLink) dlLink.href = blobUrl;
+}
+
 async function ggSavePdf(scope) {
   const btn = document.getElementById(scope === "mine" ? "gg-save-mine-btn" : "gg-save-all-btn");
   const originalText = btn.textContent;
@@ -1480,7 +1511,7 @@ async function ggSavePdf(scope) {
     doc.setProperties({ title: filename });
     const blobUrl = doc.output("bloburl");
     if (previewWindow) {
-      previewWindow.location = blobUrl;
+      ggOpenPdfPreview(previewWindow, blobUrl, filename);
       document.getElementById("gg-save-guide").classList.remove("hidden");
     } else {
       doc.save(filename);
