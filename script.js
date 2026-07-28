@@ -898,7 +898,7 @@ async function ggSubmitPost() {
   const caption = document.getElementById("gg-caption-input").value.trim();
   const submitBtn = document.getElementById("gg-submit-btn");
 
-  if (!name) { ggShowComposerError("おなまえを入力してください。"); return; }
+  if (!ggState.editingPostId && !name) { ggShowComposerError("おなまえを入力してください。"); return; }
   if (!ggState.editingPostId && !ggState.photoBaseCanvas) { ggShowComposerError("写真を選んでください。"); return; }
 
   ggShowComposerError("");
