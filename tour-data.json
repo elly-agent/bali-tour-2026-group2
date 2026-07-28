@@ -75,7 +75,8 @@
     { "id": "trivia", "number": 18, "title": "バリ豆知識", "type": "trivia" },
     { "id": "faq", "number": 19, "title": "よくある質問", "type": "faq" },
     { "id": "packing", "number": 20, "title": "持ち物チェックリスト", "type": "checklist" },
-    { "id": "line", "number": 21, "title": "バリでもチェック！ラッキーオパ", "type": "line" }
+    { "id": "line", "number": 21, "title": "バリでもチェック！ラッキーオパ", "type": "line" },
+    { "id": "gourmet-gram", "number": 22, "title": "バリ旅グラム", "type": "gourmet-gram" }
   ],
 
   "worldMap": {
@@ -188,6 +189,30 @@
       { "title": "耳・鼻のケア", "text": "耳に水が入った違和感や、鼻に水が入るムズムズ感は誰にでも起こります。無理に潜らず、水面近くで呼吸を整えながら楽しむだけでも十分きれいな景色が見られます。" },
       { "title": "見終わったあとのケア", "text": "上がった後は、真水でさっと体を流し、少し休んでから次の行動に移ると、後半も元気に過ごせます。" }
     ]
+  },
+
+  "_gourmetGramReadme": "moods/tags の id は投稿の保存形式と紐づいているため変更しないでください。emoji・labelの文言だけは自由に書き換えOKです。",
+  "gourmetGram": {
+    "lead": "投稿は自動でみんなの画面に反映されます（約30〜60秒ごとに更新）",
+    "moods": [
+      { "id": "yummy", "emoji": "😋", "label": "美味しい！" },
+      { "id": "again", "emoji": "🔁", "label": "また食べたい！" },
+      { "id": "bali", "emoji": "🌴", "label": "バリの味！" },
+      { "id": "strange", "emoji": "🤔", "label": "不思議な味！" },
+      { "id": "spicy", "emoji": "🌶️", "label": "ピリ辛♪" }
+    ],
+    "tags": [
+      { "id": "breakfast", "emoji": "🌅", "label": "朝ご飯" },
+      { "id": "lunch", "emoji": "🌞", "label": "ランチ" },
+      { "id": "cafe", "emoji": "☕", "label": "カフェ" },
+      { "id": "dinner", "emoji": "🌙", "label": "ディナー" },
+      { "id": "snack", "emoji": "🍹", "label": "おやつ" }
+    ],
+    "saveMineTitle": "バリ旅deごちそうさま！保存",
+    "saveMineDesc": "バリ旅で食べたものをPDFにします。",
+    "saveAllTitle": "バリ旅deごちそうさま！保存",
+    "saveAllDesc": "参加者みんなで投稿した、食べ物アラカルト♪PDFにします。",
+    "saveDeadlineNote": "※保存する方は年内にお願いします。"
   },
 
   "packingTip": "忘れ物がないか、出発前にチェックしてね！寺院では肌を覆う服装で訪れ、現地の文化を尊重しましょう。",

@@ -188,6 +188,10 @@
       <span class="shortcut-pill-icon">🌤️</span>
       <span class="shortcut-pill-text">天気・時間</span>
     </button>
+    <button class="shortcut-pill shortcut-pill--gourmet-gram" id="btn-gourmet-gram-shortcut" type="button" title="バリ旅グラムを開く">
+      <span class="shortcut-pill-icon">📸</span>
+      <span class="shortcut-pill-text">バリ旅グラム</span>
+    </button>
   </div>
 
   <!-- 進捗バー -->
@@ -604,8 +608,92 @@
         </div>
       </section>
 
+      <!-- ============ Chapter 22: バリ旅グラム ============ -->
+      <section class="slide" data-chapter="22" data-type="gourmet-gram" id="slide-22">
+        <div class="slide-scroll">
+        <div class="slide-inner reveal-group gg">
+          <p class="chapter-eyebrow reveal">Chapter 22</p>
+          <h2 class="chapter-title reveal" data-bind="chapterTitle:gourmet-gram"></h2>
+          <p class="chapter-lead reveal" data-bind="gourmetGram.lead"></p>
+
+          <div class="gg-stories-row reveal" aria-hidden="true" id="gg-stories-row"></div>
+
+          <section class="gg-composer reveal" id="gg-composer">
+            <div class="gg-composer-head">
+              <div class="gg-avatar gg-mood-avatar" id="gg-mood-avatar">😋</div>
+              <input class="gg-field-input" style="margin:0;" type="text" id="gg-name-input" placeholder="おなまえ" maxlength="20">
+            </div>
+
+            <p class="gg-mood-label">今の気持ちを選んでね（毎回のプロフ写真の代わりになります）</p>
+            <div class="gg-mood-row" id="gg-mood-row"></div>
+
+            <div class="gg-coach-anchor" id="gg-photo-coach-anchor">
+              <label class="gg-photo-drop" id="gg-photo-drop">
+                <div class="gg-photo-drop-icon" id="gg-photo-drop-icon">📷</div>
+                <span class="gg-photo-drop-text" id="gg-photo-drop-text">撮影 または ライブラリから選ぶ</span>
+                <input type="file" accept="image/*" id="gg-photo-input">
+              </label>
+              <span class="gg-coach-bubble" id="gg-photo-coach-bubble" style="bottom:76px; left:50%; transform:translateX(-50%);">①まずは写真をタップ！</span>
+              <span class="gg-coach-finger" id="gg-photo-coach-finger" style="bottom:22px; left:50%; margin-left:-19px;">👆</span>
+            </div>
+
+            <div class="gg-popup-card hidden" id="gg-brightness-popup">
+              <p class="gg-popup-title">📸 写真、明るくしてみる？</p>
+              <p class="gg-popup-sub">スライダーを動かすだけで、パッと明るい写真になります</p>
+              <canvas class="gg-popup-preview" id="gg-brightness-preview"></canvas>
+              <div class="gg-brightness-row">
+                <span>🌙</span>
+                <input class="gg-brightness-slider" type="range" min="0" max="100" value="50" id="gg-brightness-slider">
+                <span>☀️</span>
+              </div>
+              <div class="gg-popup-btn-row">
+                <button class="gg-popup-btn secondary" type="button" id="gg-brightness-skip">そのままでOK</button>
+                <button class="gg-popup-btn primary" type="button" id="gg-brightness-apply">明るくする</button>
+              </div>
+            </div>
+
+            <input class="gg-field-input" type="text" id="gg-location-input" placeholder="どこで食べた？" maxlength="40">
+            <textarea class="gg-field-textarea" id="gg-caption-input" placeholder="ひとこと" maxlength="200"></textarea>
+
+            <div class="gg-tag-row" id="gg-tag-row"></div>
+
+            <p class="gg-composer-error hidden" id="gg-composer-error"></p>
+            <button class="gg-btn-post" type="button" id="gg-submit-btn">投稿する</button>
+            <button class="gg-btn-cancel-edit hidden" type="button" id="gg-cancel-edit-btn">編集をやめる</button>
+          </section>
+
+          <h3 class="gg-timeline-title reveal">グルメタイムライン</h3>
+          <div class="gg-timeline" id="gg-timeline"></div>
+          <p class="gg-timeline-empty hidden" id="gg-timeline-empty">まだ投稿がありません。最初のグルメ投稿をしてみましょう！</p>
+
+          <section class="gg-final-save reveal">
+            <h2 class="gg-final-save-title">旅の思い出を保存しよう</h2>
+            <p class="gg-final-save-lead">旅の終わりに、ここから保存できます。旅の記念・お土産にどうぞ。</p>
+
+            <div class="gg-save-card">
+              <div class="gg-save-card-icon">📕</div>
+              <p class="gg-save-card-eyebrow">自分の投稿</p>
+              <h3 class="gg-save-card-title" data-bind="gourmetGram.saveMineTitle"></h3>
+              <p class="gg-save-card-desc" data-bind="gourmetGram.saveMineDesc"></p>
+              <button class="gg-save-card-btn green" type="button" id="gg-save-mine-btn">自分の思い出をPDFで保存する</button>
+            </div>
+
+            <div class="gg-save-card">
+              <div class="gg-save-card-icon">📗</div>
+              <p class="gg-save-card-eyebrow">みんなの投稿</p>
+              <h3 class="gg-save-card-title" data-bind="gourmetGram.saveAllTitle"></h3>
+              <p class="gg-save-card-desc" data-bind="gourmetGram.saveAllDesc"></p>
+              <button class="gg-save-card-btn gold" type="button" id="gg-save-all-btn">みんなの思い出をPDFで保存する</button>
+            </div>
+
+            <p class="gg-save-deadline-note" data-bind="gourmetGram.saveDeadlineNote"></p>
+          </section>
+        </div>
+        </div>
+      </section>
+
       <!-- ============ エンディング ============ -->
-      <section class="slide slide--ending" data-chapter="22" data-type="ending" id="slide-22">
+      <section class="slide slide--ending" data-chapter="23" data-type="ending" id="slide-23">
         <div class="slide-scroll">
         <div class="ending-sun" aria-hidden="true"></div>
         <div class="ending-plane" aria-hidden="true">✈️</div>
