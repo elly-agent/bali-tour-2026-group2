@@ -1510,10 +1510,21 @@ async function ggSavePdf(scope) {
     const filename = scope === "mine" ? "バリ旅deごちそうさま_わたしの記録.pdf" : "バリ旅deごちそうさま_みんなの記録.pdf";
     doc.setProperties({ title: filename });
     const blobUrl = doc.output("bloburl");
-    if (previewWindow) {
-      ggOpenPdfPreview(previewWindow, blobUrl, filename);
+    // previewWindowへの書き込みが何らかの理由で失敗した場合も、その場でダウンロードする
+    // 従来の方法に自動で切り替わるようにしておく（保存自体が失敗しないようにするため）
+    let previewOk = false;
+    if (previewWindow && !previewWindow.closed) {
+      try {
+        ggOpenPdfPreview(previewWindow, blobUrl, filename);
+        previewOk = true;
+      } catch (e) {
+        previewOk = false;
+      }
+    }
+    if (previewOk) {
       document.getElementById("gg-save-guide").classList.remove("hidden");
     } else {
+      if (previewWindow && !previewWindow.closed) previewWindow.close();
       doc.save(filename);
     }
   } catch (e) {
