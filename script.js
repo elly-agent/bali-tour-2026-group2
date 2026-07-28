@@ -1183,6 +1183,50 @@ function ggDrawPageFrame(ctx, color) {
   ctx.restore();
 }
 
+// ヤシの木・太陽・波の線画（チャプター内の飾りと同じモチーフ）を、指定した
+// 中心座標(cx,cy)を基準に幅wで描く。表紙ページの余白を埋めるのに使う
+function ggDrawBaliMotif(ctx, cx, cy, w, color) {
+  const s = w / 200;
+  ctx.save();
+  ctx.translate(cx - w / 2, cy - 30 * s);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5 * s;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  ctx.beginPath();
+  ctx.moveTo(0, 52 * s);
+  ctx.bezierCurveTo(25 * s, 46 * s, 50 * s, 58 * s, 75 * s, 52 * s);
+  ctx.bezierCurveTo(100 * s, 46 * s, 125 * s, 58 * s, 150 * s, 52 * s);
+  ctx.bezierCurveTo(175 * s, 46 * s, 190 * s, 58 * s, 200 * s, 52 * s);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(100 * s, 30 * s, 13 * s, 0, Math.PI * 2);
+  ctx.stroke();
+
+  [
+    [28 * s, false],
+    [172 * s, true],
+  ].forEach(([tx, flip]) => {
+    const d = flip ? -1 : 1;
+    ctx.beginPath();
+    ctx.moveTo(tx, 52 * s);
+    ctx.lineTo(tx, 28 * s);
+    ctx.moveTo(tx, 28 * s);
+    ctx.bezierCurveTo(tx - d * 9 * s, 23 * s, tx - d * 14 * s, 25 * s, tx - d * 19 * s, 19 * s);
+    ctx.moveTo(tx, 28 * s);
+    ctx.bezierCurveTo(tx - d * 6 * s, 19 * s, tx - d * 4 * s, 13 * s, tx - d * 10 * s, 9 * s);
+    ctx.moveTo(tx, 28 * s);
+    ctx.bezierCurveTo(tx + d * 4 * s, 19 * s, tx + d * 10 * s, 17 * s, tx + d * 14 * s, 11 * s);
+    ctx.moveTo(tx, 28 * s);
+    ctx.bezierCurveTo(tx + d * 8 * s, 21 * s, tx + d * 14 * s, 23 * s, tx + d * 20 * s, 17 * s);
+    ctx.stroke();
+  });
+
+  ctx.restore();
+}
+
 function ggDrawTitleCanvas(title) {
   const canvas = document.createElement("canvas");
   canvas.width = GG_PDF_PAGE_W;
@@ -1207,6 +1251,9 @@ function ggDrawTitleCanvas(title) {
   ctx.font = "400 28px 'Noto Sans JP', sans-serif";
   ctx.fillStyle = "rgba(255,255,255,.85)";
   ctx.fillText(new Date().toLocaleDateString("ja-JP"), GG_PDF_PAGE_W / 2, GG_PDF_PAGE_H / 2 + 90);
+
+  ggDrawBaliMotif(ctx, GG_PDF_PAGE_W / 2, GG_PDF_PAGE_H * 0.24, 140, "rgba(212,162,76,0.55)");
+  ggDrawBaliMotif(ctx, GG_PDF_PAGE_W / 2, GG_PDF_PAGE_H * 0.78, 140, "rgba(212,162,76,0.55)");
 
   return canvas;
 }
