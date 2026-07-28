@@ -769,6 +769,7 @@ function initGourmetGram(data) {
 
   document.getElementById("gg-photo-input").addEventListener("change", ggHandlePhotoSelected);
   document.getElementById("gg-brightness-slider").addEventListener("input", ggUpdateBrightnessPreview);
+  document.getElementById("gg-brightness-slider").addEventListener("change", ggUpdateBrightnessPreview);
   document.getElementById("gg-brightness-skip").addEventListener("click", () => ggConfirmBrightness(false));
   document.getElementById("gg-brightness-apply").addEventListener("click", () => ggConfirmBrightness(true));
   document.getElementById("gg-submit-btn").addEventListener("click", ggSubmitPost);
@@ -823,13 +824,24 @@ function ggDrawResizedCanvas(source, maxDim) {
   return canvas;
 }
 
+// CSS の filter:brightness() は環境によって効かないことがあるため、
+// ピクセルデータを直接書き換えて、どの端末でも確実に明るさが変わるようにする
 function ggBrightnessCanvas(sourceCanvas, brightnessPercent) {
   const canvas = document.createElement("canvas");
   canvas.width = sourceCanvas.width;
   canvas.height = sourceCanvas.height;
   const ctx = canvas.getContext("2d");
-  ctx.filter = "brightness(" + brightnessPercent + "%)";
   ctx.drawImage(sourceCanvas, 0, 0);
+
+  const factor = brightnessPercent / 100;
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const d = imageData.data;
+  for (let i = 0; i < d.length; i += 4) {
+    d[i] = Math.min(255, d[i] * factor);
+    d[i + 1] = Math.min(255, d[i + 1] * factor);
+    d[i + 2] = Math.min(255, d[i + 2] * factor);
+  }
+  ctx.putImageData(imageData, 0, 0);
   return canvas;
 }
 
