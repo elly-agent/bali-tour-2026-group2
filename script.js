@@ -1433,6 +1433,7 @@ async function ggSavePdf(scope) {
     const blobUrl = doc.output("bloburl");
     if (previewWindow) {
       previewWindow.location = blobUrl;
+      document.getElementById("gg-save-guide").classList.remove("hidden");
     } else {
       doc.save(filename);
     }
@@ -2515,6 +2516,12 @@ function setupNavigationEvents() {
   document.getElementById("btn-close-checklist-complete").addEventListener("click", closeChecklistCompletePopup);
   document.getElementById("checklist-complete-popup").addEventListener("click", (event) => {
     if (event.target.id === "checklist-complete-popup") closeChecklistCompletePopup();
+  });
+  document.getElementById("gg-save-guide-close").addEventListener("click", () => {
+    document.getElementById("gg-save-guide").classList.add("hidden");
+  });
+  document.getElementById("gg-save-guide").addEventListener("click", (event) => {
+    if (event.target.id === "gg-save-guide") document.getElementById("gg-save-guide").classList.add("hidden");
   });
 
 

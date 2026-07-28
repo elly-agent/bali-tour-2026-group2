@@ -1627,6 +1627,27 @@ ul { list-style: none; margin: 0; padding: 0; }
 }
 
 /* --- 持ち物チェック完了のお祝いポップアップ --- */
+.gg-save-guide {
+  position: fixed; inset: 0; z-index: 470; background: rgba(6,19,28,.75);
+  display: flex; align-items: center; justify-content: center; padding: var(--space-m);
+}
+.gg-save-guide.hidden { display: none; }
+.gg-save-guide-panel {
+  background: var(--color-white); border-radius: var(--radius-l);
+  width: min(400px, 100%); box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  padding: var(--space-l) var(--space-m); text-align: center;
+}
+.gg-save-guide-title { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--color-turquoise-deep); margin: 0 0 var(--space-m); }
+.gg-save-guide-step {
+  display: flex; align-items: flex-start; gap: 12px; text-align: left;
+  background: var(--color-sand); border-radius: var(--radius-m);
+  padding: 12px 14px; margin-bottom: var(--space-s);
+}
+.gg-save-guide-step-icon { font-size: 1.6rem; flex: 0 0 auto; }
+.gg-save-guide-step-text { font-size: .88rem; color: var(--color-ink-soft); line-height: 1.6; }
+.gg-save-guide-step-text b { color: var(--color-ink); }
+.gg-save-guide-note { font-size: .82rem; color: var(--color-ink-soft); margin: var(--space-s) 0 var(--space-m); }
+
 .checklist-complete-popup {
   position: fixed; inset: 0; z-index: 460; background: rgba(6,19,28,.75);
   display: flex; align-items: center; justify-content: center; padding: var(--space-m);

@@ -716,6 +716,23 @@
   <!-- ラッキーオパのボタンを押した時に、画面にふわっとかかる透明感のある虹エフェクト -->
   <div class="rainbow-overlay" id="rainbow-overlay" aria-hidden="true"></div>
 
+  <!-- PDF保存後、新しいタブに開いたPDFをどう保存すればいいか案内するポップアップ -->
+  <div class="gg-save-guide hidden" id="gg-save-guide">
+    <div class="gg-save-guide-panel">
+      <p class="gg-save-guide-title">📄 別のタブでPDFが開きました</p>
+      <div class="gg-save-guide-step">
+        <span class="gg-save-guide-step-icon">📱</span>
+        <span class="gg-save-guide-step-text"><b>iPhoneの方</b><br>新しいタブの画面上にある共有マーク(四角に↑)をタップ→「"ファイル"に保存」を選んでください</span>
+      </div>
+      <div class="gg-save-guide-step">
+        <span class="gg-save-guide-step-icon">🤖</span>
+        <span class="gg-save-guide-step-text"><b>Androidの方</b><br>新しいタブの画面上にあるダウンロードマーク(↓)をタップしてください</span>
+      </div>
+      <p class="gg-save-guide-note">保存が終わったら、このタブに戻ってきてくださいね</p>
+      <button class="btn-primary" id="gg-save-guide-close" type="button">わかった！</button>
+    </div>
+  </div>
+
   <!-- 持ち物チェックが全部そろった時に表示する、お祝いポップアップ -->
   <div class="checklist-complete-popup hidden" id="checklist-complete-popup">
     <div class="checklist-complete-panel">
