@@ -957,6 +957,8 @@ function ggResetComposer() {
   document.getElementById("gg-photo-drop-text").textContent = "撮影 または ライブラリから選ぶ";
   document.getElementById("gg-submit-btn").textContent = "投稿する";
   document.getElementById("gg-cancel-edit-btn").classList.add("hidden");
+  document.getElementById("gg-photo-name-group").classList.remove("hidden");
+  document.getElementById("gg-editing-label").classList.add("hidden");
   ggShowComposerError("");
 }
 
@@ -964,6 +966,8 @@ function ggCancelEdit() {
   ggResetComposer();
 }
 
+// 編集は写真・名前を変更できない仕組みなので、その2つは隠して「今から食べる！」以下だけを
+// 編集画面として見せる。写真選択の上までスクロールされて新規投稿に見えてしまう不具合の対策
 function ggStartEdit(post) {
   ggState.editingPostId = post.id;
   ggSelectMood(post.mood);
@@ -972,6 +976,10 @@ function ggStartEdit(post) {
   document.getElementById("gg-caption-input").value = post.caption || "";
   document.getElementById("gg-submit-btn").textContent = "更新する";
   document.getElementById("gg-cancel-edit-btn").classList.remove("hidden");
+  document.getElementById("gg-photo-name-group").classList.add("hidden");
+  const editingLabel = document.getElementById("gg-editing-label");
+  editingLabel.textContent = "✏️ " + post.name + "さんの投稿を編集中（写真・お名前は変更できません）";
+  editingLabel.classList.remove("hidden");
   document.getElementById("gg-composer").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -2703,6 +2711,10 @@ function resetOpeningVisuals() {
 
 function setupOpeningEntry() {
   document.getElementById("btn-start-experience").addEventListener("click", enterMainApp);
+  document.getElementById("btn-start-gourmet-gram").addEventListener("click", () => {
+    enterMainApp();
+    goToGourmetGram();
+  });
 }
 
 // topbar・shortcut-barの実際の高さをCSS変数に反映する。

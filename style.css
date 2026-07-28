@@ -400,6 +400,11 @@ ul { list-style: none; margin: 0; padding: 0; }
   color: var(--color-turquoise-deep);
   border: 1px solid var(--color-turquoise);
 }
+.opening-gourmet-gram-btn {
+  display: block; margin: var(--space-s) auto 0;
+  background: #A6332E; color: #fff; border: none;
+  padding: 12px 32px; font-size: .85rem;
+}
 .btn-secondary:hover { transform: translateY(-2px); }
 
 /* ------------------------------------------------------------
@@ -979,6 +984,11 @@ ul { list-style: none; margin: 0; padding: 0; }
   color: #fff; font-weight: 700; font-size: 1.05rem;
 }
 .gg-mood-label, .gg-tag-label { font-size: .78rem; font-weight: 700; color: var(--gg-ink-soft); margin: 0 0 8px; }
+.gg-editing-label {
+  font-size: .88rem; font-weight: 700; color: var(--gg-red);
+  background: var(--gg-card-dim); border-radius: 12px;
+  padding: 10px 14px; margin: 0 0 16px;
+}
 .gg-mood-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .gg-mood-chip {
   flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 3px;

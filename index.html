@@ -137,6 +137,7 @@
       <p class="opening-title-sub" id="opening-title-sub"></p>
       <p class="opening-title-sub2" id="opening-title-sub2"></p>
       <button class="btn-primary" id="btn-start-experience">あなたの旅を開く</button>
+      <button class="btn-secondary opening-gourmet-gram-btn" id="btn-start-gourmet-gram" type="button">📸 バリ旅グラムを開く</button>
     </div>
   </div>
 </div>
@@ -624,31 +625,35 @@
           </svg>
 
           <section class="gg-composer reveal" id="gg-composer">
-            <div class="gg-coach-anchor" id="gg-photo-coach-anchor">
-              <label class="gg-photo-drop" id="gg-photo-drop">
-                <div class="gg-photo-drop-icon" id="gg-photo-drop-icon">📷</div>
-                <span class="gg-photo-drop-text" id="gg-photo-drop-text">撮影 または ライブラリから選ぶ</span>
-                <input type="file" accept="image/*" id="gg-photo-input">
-              </label>
-              <span class="gg-coach-bubble" id="gg-photo-coach-bubble" style="bottom:76px; left:50%; transform:translateX(-50%);">①まずは写真をタップ！</span>
-              <span class="gg-coach-finger" id="gg-photo-coach-finger" style="bottom:22px; left:50%; margin-left:-19px;">👆</span>
+            <div id="gg-photo-name-group">
+              <div class="gg-coach-anchor" id="gg-photo-coach-anchor">
+                <label class="gg-photo-drop" id="gg-photo-drop">
+                  <div class="gg-photo-drop-icon" id="gg-photo-drop-icon">📷</div>
+                  <span class="gg-photo-drop-text" id="gg-photo-drop-text">撮影 または ライブラリから選ぶ</span>
+                  <input type="file" accept="image/*" id="gg-photo-input">
+                </label>
+                <span class="gg-coach-bubble" id="gg-photo-coach-bubble" style="bottom:76px; left:50%; transform:translateX(-50%);">①まずは写真をタップ！</span>
+                <span class="gg-coach-finger" id="gg-photo-coach-finger" style="bottom:22px; left:50%; margin-left:-19px;">👆</span>
+              </div>
+
+              <div class="gg-popup-card hidden" id="gg-brightness-popup">
+                <p class="gg-popup-title">📸 写真、明るくしてみる？</p>
+                <p class="gg-popup-sub">スライダーを動かすだけで、上の写真がパッと明るくなります</p>
+                <div class="gg-brightness-row">
+                  <span>🌙</span>
+                  <input class="gg-brightness-slider" type="range" min="0" max="100" value="50" id="gg-brightness-slider">
+                  <span>☀️</span>
+                </div>
+                <div class="gg-popup-btn-row">
+                  <button class="gg-popup-btn secondary" type="button" id="gg-brightness-skip">これでOK！</button>
+                  <button class="gg-popup-btn primary" type="button" id="gg-brightness-apply">明るくする</button>
+                </div>
+              </div>
+
+              <input class="gg-field-input gg-field-input--name" type="text" id="gg-name-input" placeholder="ここにお名前入力" maxlength="20">
             </div>
 
-            <div class="gg-popup-card hidden" id="gg-brightness-popup">
-              <p class="gg-popup-title">📸 写真、明るくしてみる？</p>
-              <p class="gg-popup-sub">スライダーを動かすだけで、上の写真がパッと明るくなります</p>
-              <div class="gg-brightness-row">
-                <span>🌙</span>
-                <input class="gg-brightness-slider" type="range" min="0" max="100" value="50" id="gg-brightness-slider">
-                <span>☀️</span>
-              </div>
-              <div class="gg-popup-btn-row">
-                <button class="gg-popup-btn secondary" type="button" id="gg-brightness-skip">これでOK！</button>
-                <button class="gg-popup-btn primary" type="button" id="gg-brightness-apply">明るくする</button>
-              </div>
-            </div>
-
-            <input class="gg-field-input gg-field-input--name" type="text" id="gg-name-input" placeholder="ここにお名前入力（ニックネームでもOK）" maxlength="20">
+            <p class="gg-editing-label hidden" id="gg-editing-label"></p>
 
             <p class="gg-mood-label">今の気持ちを選んでね（毎回のプロフ写真の代わりになります）</p>
             <div class="gg-mood-row" id="gg-mood-row"></div>
