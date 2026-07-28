@@ -1112,77 +1112,150 @@ function ggLoadScript(src) {
   });
 }
 
-let ggLibsLoadPromise = null;
-function ggLoadPdfLibs() {
-  if (window.jspdf && window.jspdf.jsPDF && window.html2canvas) return Promise.resolve();
-  if (ggLibsLoadPromise) return ggLibsLoadPromise;
-  ggLibsLoadPromise = Promise.all([
-    window.html2canvas ? Promise.resolve() : ggLoadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"),
-    (window.jspdf && window.jspdf.jsPDF) ? Promise.resolve() : ggLoadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"),
-  ]);
-  return ggLibsLoadPromise;
+// html2canvas（ページ全体をクローンして描画するライブラリ）は、このサイトのように
+// 常時アニメーションする要素（星空・BGM等）を含む重いページでは応答が返らなくなることが
+// あったため使わず、jsPDFだけを読み込み、写真・文字はCanvas2D APIで直接描画する
+let ggPdfLibLoadPromise = null;
+function ggLoadPdfLib() {
+  if (window.jspdf && window.jspdf.jsPDF) return Promise.resolve();
+  if (ggPdfLibLoadPromise) return ggPdfLibLoadPromise;
+  ggPdfLibLoadPromise = ggLoadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+  return ggPdfLibLoadPromise;
 }
 
-function ggBuildTitlePageEl(title) {
-  const page = document.createElement("div");
-  page.style.cssText = "width:900px; height:1270px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(180deg,#A6332E,#7A2321); color:#fff; font-family:'Noto Sans JP','Hiragino Sans',sans-serif; box-sizing:border-box; text-align:center;";
-  const dateStr = new Date().toLocaleDateString("ja-JP");
-  page.innerHTML =
-    "<div style='font-size:26px; letter-spacing:.2em; color:#D4A24C; margin-bottom:20px;'>BALI TOUR 2026</div>" +
-    "<div style='font-size:52px; font-weight:700; margin-bottom:16px;'>" + ggEscapeHtml(title) + "</div>" +
-    "<div style='font-size:20px; opacity:.85;'>" + dateStr + "</div>";
-  return page;
+function ggLoadImageEl(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
 }
 
-function ggBuildPostPageEl(post) {
+function ggWrapCanvasText(ctx, text, maxWidth) {
+  const lines = [];
+  text.split("\n").forEach((paragraph) => {
+    let line = "";
+    for (const ch of paragraph) {
+      const test = line + ch;
+      if (line && ctx.measureText(test).width > maxWidth) {
+        lines.push(line);
+        line = ch;
+      } else {
+        line = test;
+      }
+    }
+    lines.push(line);
+  });
+  return lines;
+}
+
+const GG_PDF_PAGE_W = 1240;
+const GG_PDF_PAGE_H = 1754; // A4比率（150dpi相当）
+
+function ggDrawTitleCanvas(title) {
+  const canvas = document.createElement("canvas");
+  canvas.width = GG_PDF_PAGE_W;
+  canvas.height = GG_PDF_PAGE_H;
+  const ctx = canvas.getContext("2d");
+  const grad = ctx.createLinearGradient(0, 0, 0, GG_PDF_PAGE_H);
+  grad.addColorStop(0, "#A6332E");
+  grad.addColorStop(1, "#7A2321");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, GG_PDF_PAGE_W, GG_PDF_PAGE_H);
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#D4A24C";
+  ctx.font = "600 34px 'Noto Sans JP', sans-serif";
+  ctx.fillText("BALI TOUR 2026", GG_PDF_PAGE_W / 2, GG_PDF_PAGE_H / 2 - 50);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "700 68px 'Noto Sans JP', sans-serif";
+  ctx.fillText(title, GG_PDF_PAGE_W / 2, GG_PDF_PAGE_H / 2 + 30);
+
+  ctx.font = "400 28px 'Noto Sans JP', sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,.85)";
+  ctx.fillText(new Date().toLocaleDateString("ja-JP"), GG_PDF_PAGE_W / 2, GG_PDF_PAGE_H / 2 + 90);
+
+  return canvas;
+}
+
+async function ggDrawPostCanvas(post) {
   const mood = ggState.moodMap[post.mood] || {};
   const tag = ggState.tagMap[post.meal_tag] || {};
-  const page = document.createElement("div");
-  page.style.cssText = "width:900px; padding:60px; background:#FFF8F3; font-family:'Noto Sans JP','Hiragino Sans',sans-serif; color:#2B1E1B; box-sizing:border-box;";
-  page.innerHTML =
-    "<img crossorigin='anonymous' style='width:100%; max-height:640px; object-fit:cover; border-radius:16px; display:block; margin-bottom:28px;'>" +
-    "<div style='font-size:30px; font-weight:700; margin-bottom:10px;'>" + (mood.emoji || "") + " " + ggEscapeHtml(post.name) + "</div>" +
-    "<div style='font-size:18px; color:#7A645C; margin-bottom:18px;'>" +
-      ggFormatTime(post.created_at) + "　" + (tag.emoji || "") + " " + ggEscapeHtml(tag.label || "") + (post.location ? "　@" + ggEscapeHtml(post.location) : "") +
-    "</div>" +
-    (post.caption ? "<div style='font-size:22px; line-height:1.7; white-space:pre-wrap;'>" + ggEscapeHtml(post.caption) + "</div>" : "");
-  page.querySelector("img").src = post.photo_url;
-  return page;
-}
+  const margin = 80;
+  const canvas = document.createElement("canvas");
+  canvas.width = GG_PDF_PAGE_W;
+  canvas.height = GG_PDF_PAGE_H;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#FFF8F3";
+  ctx.fillRect(0, 0, GG_PDF_PAGE_W, GG_PDF_PAGE_H);
 
-async function ggRenderElToCanvas(element) {
-  const holder = document.createElement("div");
-  holder.style.cssText = "position:fixed; left:-99999px; top:0; z-index:-1;";
-  holder.appendChild(element);
-  document.body.appendChild(holder);
+  let cursorY = margin;
   try {
-    const imgs = element.querySelectorAll("img");
-    await Promise.all(Array.from(imgs).map((img) =>
-      img.complete ? Promise.resolve() : new Promise((res) => { img.onload = res; img.onerror = res; })
-    ));
-    return await window.html2canvas(element, { scale: 2, useCORS: true, backgroundColor: "#FFF8F3" });
-  } finally {
-    document.body.removeChild(holder);
+    const img = await ggLoadImageEl(post.photo_url);
+    const maxW = GG_PDF_PAGE_W - margin * 2;
+    const maxH = GG_PDF_PAGE_H * 0.5;
+    const ratio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+    const w = img.naturalWidth * ratio;
+    const h = img.naturalHeight * ratio;
+    const x = (GG_PDF_PAGE_W - w) / 2;
+    const r = 24;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x + r, cursorY);
+    ctx.arcTo(x + w, cursorY, x + w, cursorY + h, r);
+    ctx.arcTo(x + w, cursorY + h, x, cursorY + h, r);
+    ctx.arcTo(x, cursorY + h, x, cursorY, r);
+    ctx.arcTo(x, cursorY, x + w, cursorY, r);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(img, x, cursorY, w, h);
+    ctx.restore();
+    cursorY += h + 50;
+  } catch (e) {
+    cursorY += 20;
   }
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#2B1E1B";
+  ctx.font = "700 42px 'Noto Sans JP', sans-serif";
+  ctx.fillText((mood.emoji ? mood.emoji + "  " : "") + post.name, margin, cursorY);
+  cursorY += 50;
+
+  ctx.fillStyle = "#7A645C";
+  ctx.font = "400 26px 'Noto Sans JP', sans-serif";
+  const metaLine = ggFormatTime(post.created_at) + "　" + (tag.emoji ? tag.emoji + tag.label : "") + (post.location ? "　@" + post.location : "");
+  ctx.fillText(metaLine, margin, cursorY);
+  cursorY += 50;
+
+  if (post.caption) {
+    ctx.fillStyle = "#2B1E1B";
+    ctx.font = "400 32px 'Noto Sans JP', sans-serif";
+    ggWrapCanvasText(ctx, post.caption, GG_PDF_PAGE_W - margin * 2).forEach((line) => {
+      ctx.fillText(line, margin, cursorY);
+      cursorY += 44;
+    });
+  }
+
+  return canvas;
 }
 
 async function ggBuildPdf(posts, title) {
-  await ggLoadPdfLibs();
+  await ggLoadPdfLib();
+  if (document.fonts && document.fonts.ready) await document.fonts.ready;
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
 
-  const titleCanvas = await ggRenderElToCanvas(ggBuildTitlePageEl(title));
+  const titleCanvas = ggDrawTitleCanvas(title);
   doc.addImage(titleCanvas.toDataURL("image/jpeg", 0.9), "JPEG", 0, 0, pageW, pageH);
 
   for (const post of posts) {
     doc.addPage();
-    const canvas = await ggRenderElToCanvas(ggBuildPostPageEl(post));
-    const ratio = Math.min(pageW / canvas.width, pageH / canvas.height);
-    const w = canvas.width * ratio;
-    const h = canvas.height * ratio;
-    doc.addImage(canvas.toDataURL("image/jpeg", 0.88), "JPEG", (pageW - w) / 2, (pageH - h) / 2, w, h);
+    const canvas = await ggDrawPostCanvas(post);
+    doc.addImage(canvas.toDataURL("image/jpeg", 0.88), "JPEG", 0, 0, pageW, pageH);
   }
 
   return doc;
