@@ -1087,7 +1087,8 @@ ul { list-style: none; margin: 0; padding: 0; }
 
 .gg-final-save { margin: var(--space-l) 0 0; }
 .gg-final-save-title { color: #fff; font-weight: 800; font-size: 1.15rem; text-align: center; margin: 0 0 4px; }
-.gg-final-save-lead { color: rgba(255,255,255,.85); font-size: .8rem; text-align: center; margin: 0 0 18px; }
+.gg-final-save-lead { color: var(--gg-gold); font-size: .95rem; font-weight: 700; letter-spacing: .04em; text-align: center; margin: 0 0 6px; }
+.gg-final-save-tagline { color: rgba(255,255,255,.9); font-size: 1.05rem; font-weight: 600; text-align: center; margin: 0 0 18px; }
 .gg-save-deadline-note { color: rgba(255,255,255,.75); font-size: .74rem; text-align: center; margin: 6px 0 0; font-weight: 700; }
 .gg-save-card { background: var(--gg-card); border-radius: 18px; padding: 22px 18px; text-align: center; margin-bottom: 16px; box-shadow: 0 10px 26px rgba(0,0,0,.22); }
 .gg-save-card-icon { font-size: 2.4rem; margin-bottom: 4px; }

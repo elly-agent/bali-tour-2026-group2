@@ -1153,6 +1153,36 @@ function ggWrapCanvasText(ctx, text, maxWidth) {
 const GG_PDF_PAGE_W = 1240;
 const GG_PDF_PAGE_H = 1754; // A4比率（150dpi相当）
 
+// A4を印刷してポスターにしても様になるよう、どのページにも共通の
+// 薄いゴールドの二重罫線フレーム＋隅の簡単な線画（ヤシの葉）を入れる
+function ggDrawPageFrame(ctx, color) {
+  const outer = 36;
+  const inner = 46;
+  ctx.save();
+  ctx.strokeStyle = color || "rgba(212,162,76,0.55)";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(outer, outer, GG_PDF_PAGE_W - outer * 2, GG_PDF_PAGE_H - outer * 2);
+  ctx.lineWidth = 1;
+  ctx.strokeRect(inner, inner, GG_PDF_PAGE_W - inner * 2, GG_PDF_PAGE_H - inner * 2);
+
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+  [
+    [70, GG_PDF_PAGE_H - 70, -1],
+    [GG_PDF_PAGE_W - 70, GG_PDF_PAGE_H - 70, 1],
+  ].forEach(([cx, cy, dir]) => {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx, cy - 46);
+    ctx.moveTo(cx, cy - 30);
+    ctx.quadraticCurveTo(cx + dir * 34, cy - 42, cx + dir * 50, cy - 18);
+    ctx.moveTo(cx, cy - 14);
+    ctx.quadraticCurveTo(cx + dir * 30, cy - 6, cx + dir * 44, cy + 12);
+    ctx.stroke();
+  });
+  ctx.restore();
+}
+
 function ggDrawTitleCanvas(title) {
   const canvas = document.createElement("canvas");
   canvas.width = GG_PDF_PAGE_W;
@@ -1163,6 +1193,7 @@ function ggDrawTitleCanvas(title) {
   grad.addColorStop(1, "#7A2321");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, GG_PDF_PAGE_W, GG_PDF_PAGE_H);
+  ggDrawPageFrame(ctx, "rgba(255,255,255,0.35)");
 
   ctx.textAlign = "center";
   ctx.fillStyle = "#D4A24C";
@@ -1186,94 +1217,126 @@ function ggChunk(arr, size) {
   return out;
 }
 
-// 1件分を、与えられた枠(x,y,w,h)の中に収まるように描く（写真は枠の高さの半分程度まで）
-async function ggDrawPostBlock(ctx, post, x, y, w, h) {
+function ggRoundRectPath(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+// 1件分を、与えられた枠(x,y,w,h)いっぱいに使って描く。余白が寂しくならないよう
+// まずカード状の背景を敷き、その中に写真・名前・タグのバッジ・ひとことを配置する
+async function ggDrawPostBlock(ctx, post, x, y, w, h, big) {
   const mood = ggState.moodMap[post.mood] || {};
   const tag = ggState.tagMap[post.meal_tag] || {};
-  let cursorY = y;
+  const pad = big ? 36 : 26;
+
+  ggRoundRectPath(ctx, x, y, w, h, 22);
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(212,162,76,0.55)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  const innerX = x + pad;
+  const innerW = w - pad * 2;
+  let cursorY = y + pad;
 
   try {
     const img = await ggLoadImageEl(post.photo_url);
-    const maxW = w;
-    const maxH = h * 0.55;
+    const maxW = innerW;
+    const maxH = h * (big ? 0.66 : 0.6);
     const ratio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
     const pw = img.naturalWidth * ratio;
     const ph = img.naturalHeight * ratio;
-    const px = x + (w - pw) / 2;
-    const r = 18;
+    const px = innerX + (innerW - pw) / 2;
+    const r = 16;
     ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(px + r, cursorY);
-    ctx.arcTo(px + pw, cursorY, px + pw, cursorY + ph, r);
-    ctx.arcTo(px + pw, cursorY + ph, px, cursorY + ph, r);
-    ctx.arcTo(px, cursorY + ph, px, cursorY, r);
-    ctx.arcTo(px, cursorY, px + pw, cursorY, r);
-    ctx.closePath();
+    ggRoundRectPath(ctx, px, cursorY, pw, ph, r);
     ctx.clip();
     ctx.drawImage(img, px, cursorY, pw, ph);
     ctx.restore();
-    cursorY += ph + 26;
+    ggRoundRectPath(ctx, px, cursorY, pw, ph, r);
+    ctx.strokeStyle = "rgba(43,30,27,0.12)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    cursorY += ph + (big ? 34 : 24);
   } catch (e) {
     cursorY += 10;
   }
 
   ctx.textAlign = "left";
   ctx.fillStyle = "#2B1E1B";
-  ctx.font = "700 30px 'Noto Sans JP', sans-serif";
-  ctx.fillText((mood.emoji ? mood.emoji + "  " : "") + post.name, x, cursorY);
-  cursorY += 34;
+  ctx.font = (big ? "700 40px" : "700 28px") + " 'Noto Sans JP', sans-serif";
+  ctx.fillText((mood.emoji ? mood.emoji + "  " : "") + post.name, innerX, cursorY);
+  cursorY += big ? 20 : 14;
+
+  // 「いつ食べた？」バッジ（薄いゴールドの丸ピル）
+  const badgeText = (tag.emoji ? tag.emoji + " " : "") + (tag.label || "");
+  if (badgeText.trim()) {
+    ctx.font = (big ? "700 22px" : "700 18px") + " 'Noto Sans JP', sans-serif";
+    const badgePad = big ? 16 : 12;
+    const badgeW = ctx.measureText(badgeText).width + badgePad * 2;
+    const badgeH = big ? 40 : 32;
+    cursorY += big ? 14 : 10;
+    ggRoundRectPath(ctx, innerX, cursorY, badgeW, badgeH, badgeH / 2);
+    ctx.fillStyle = "#F4E9E2";
+    ctx.fill();
+    ctx.fillStyle = "#A6332E";
+    ctx.textBaseline = "middle";
+    ctx.fillText(badgeText, innerX + badgePad, cursorY + badgeH / 2 + 1);
+    ctx.textBaseline = "alphabetic";
+    cursorY += badgeH + (big ? 18 : 14);
+  }
 
   ctx.fillStyle = "#7A645C";
-  ctx.font = "400 20px 'Noto Sans JP', sans-serif";
-  const metaLine = ggFormatTime(post.created_at) + "　" + (tag.emoji ? tag.emoji + tag.label : "") + (post.location ? "　@" + post.location : "");
-  ctx.fillText(metaLine, x, cursorY);
-  cursorY += 32;
+  ctx.font = (big ? "400 22px" : "400 18px") + " 'Noto Sans JP', sans-serif";
+  const metaLine = ggFormatTime(post.created_at) + (post.location ? "　@" + post.location : "");
+  ctx.fillText(metaLine, innerX, cursorY);
+  cursorY += big ? 34 : 26;
 
   if (post.caption) {
     ctx.fillStyle = "#2B1E1B";
-    ctx.font = "400 22px 'Noto Sans JP', sans-serif";
-    const remaining = Math.max(1, Math.floor((y + h - cursorY) / 30));
-    ggWrapCanvasText(ctx, post.caption, w).slice(0, remaining).forEach((line) => {
-      ctx.fillText(line, x, cursorY);
-      cursorY += 30;
+    ctx.font = (big ? "400 26px" : "400 20px") + " 'Noto Sans JP', sans-serif";
+    const lineH = big ? 36 : 27;
+    const remaining = Math.max(1, Math.floor((y + h - pad - cursorY) / lineH));
+    ggWrapCanvasText(ctx, post.caption, innerW).slice(0, remaining).forEach((line) => {
+      ctx.fillText(line, innerX, cursorY);
+      cursorY += lineH;
     });
   }
 }
 
-// 1ページに最大2件を並べて、旅の記録帳らしい密度に見せる
+// 1ページに最大2件を並べて、旅の記録帳らしい密度に見せる。奇数件で最後の1件だけに
+// なるページは、余白が寂しくならないよう写真を大きく使った特別なレイアウトにする
 async function ggDrawPostsPageCanvas(posts) {
   const canvas = document.createElement("canvas");
   canvas.width = GG_PDF_PAGE_W;
   canvas.height = GG_PDF_PAGE_H;
   const ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#FFF8F3";
+  ctx.fillStyle = "#FBF2E9";
   ctx.fillRect(0, 0, GG_PDF_PAGE_W, GG_PDF_PAGE_H);
+  ggDrawPageFrame(ctx);
 
-  const margin = 70;
-  const gap = 50;
+  const margin = 90;
+  const gap = 40;
   const usableH = GG_PDF_PAGE_H - margin * 2;
+  const usableW = GG_PDF_PAGE_W - margin * 2;
+  const isSingleBig = posts.length === 1;
   const blockH = posts.length === 2 ? (usableH - gap) / 2 : usableH;
-  const blockW = GG_PDF_PAGE_W - margin * 2;
 
   for (let i = 0; i < posts.length; i++) {
     const blockY = margin + i * (blockH + gap);
-    await ggDrawPostBlock(ctx, posts[i], margin, blockY, blockW, blockH);
-  }
-
-  if (posts.length === 2) {
-    ctx.strokeStyle = "rgba(43,30,27,0.15)";
-    ctx.lineWidth = 2;
-    const lineY = margin + blockH + gap / 2;
-    ctx.beginPath();
-    ctx.moveTo(margin, lineY);
-    ctx.lineTo(GG_PDF_PAGE_W - margin, lineY);
-    ctx.stroke();
+    await ggDrawPostBlock(ctx, posts[i], margin, blockY, usableW, blockH, isSingleBig);
   }
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "rgba(43,30,27,0.35)";
+  ctx.fillStyle = "rgba(43,30,27,0.4)";
   ctx.font = "400 18px 'Noto Sans JP', sans-serif";
-  ctx.fillText("BALI TOUR 2026", GG_PDF_PAGE_W / 2, GG_PDF_PAGE_H - 30);
+  ctx.fillText("BALI TOUR 2026 ｜ バリ旅ぐらむスクラップ", GG_PDF_PAGE_W / 2, GG_PDF_PAGE_H - 55);
 
   return canvas;
 }
@@ -1309,14 +1372,25 @@ async function ggSavePdf(scope) {
     return;
   }
 
+  // タップした直後（PDF作成が終わる前）に空のタブを開いておき、完成したPDFを
+  // そのタブへ表示する。バリ旅グラムのタブ自体は残るので、タブを切り替えれば戻れる
+  const previewWindow = window.open("", "_blank");
+
   btn.disabled = true;
   btn.textContent = "作成中…（写真の枚数によって少し時間がかかります）";
   try {
     const sorted = posts.slice().sort((a, b) => a.created_at - b.created_at);
     const doc = await ggBuildPdf(sorted, "バリ旅deごちそうさま！");
     const filename = scope === "mine" ? "バリ旅deごちそうさま_わたしの記録.pdf" : "バリ旅deごちそうさま_みんなの記録.pdf";
-    doc.save(filename);
+    doc.setProperties({ title: filename });
+    const blobUrl = doc.output("bloburl");
+    if (previewWindow) {
+      previewWindow.location = blobUrl;
+    } else {
+      doc.save(filename);
+    }
   } catch (e) {
+    if (previewWindow) previewWindow.close();
     window.alert("PDFの作成に失敗しました。通信環境の良い場所でもう一度お試しください。");
   } finally {
     btn.disabled = false;
