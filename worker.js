@@ -1,5 +1,5 @@
-const MOODS = new Set(["yummy", "again", "bali", "strange", "spicy"]);
-const MEAL_TAGS = new Set(["breakfast", "lunch", "cafe", "dinner", "snack"]);
+const MOODS = new Set(["expect", "yummy", "again", "bali", "strange", "spicy"]);
+const MEAL_TAGS = new Set(["before", "breakfast", "lunch", "cafe", "dinner", "snack"]);
 const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
 
 function json(data, status = 200) {

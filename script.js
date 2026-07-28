@@ -751,7 +751,8 @@ function initGourmetGram(data) {
     btn.addEventListener("click", () => ggSelectTag(tag.id));
     tagRow.appendChild(btn);
   });
-  ggSelectTag(gg.tags[1] ? gg.tags[1].id : gg.tags[0].id);
+  const defaultTag = gg.tags.find((t) => t.id === "before") || gg.tags[0];
+  ggSelectTag(defaultTag.id);
 
   if (localStorage.getItem(GG_COACH_PHOTO_KEY)) {
     document.getElementById("gg-photo-coach-bubble").classList.add("hidden");
