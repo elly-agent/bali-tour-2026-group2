@@ -1275,11 +1275,13 @@ function ggRoundRectPath(ctx, x, y, w, h, r) {
 }
 
 // 1件分を、与えられた枠(x,y,w,h)いっぱいに使って描く。余白が寂しくならないよう
-// まずカード状の背景を敷き、その中に写真・名前・タグのバッジ・ひとことを配置する
-async function ggDrawPostBlock(ctx, post, x, y, w, h, big) {
+// まずカード状の背景を敷き、その中に写真・名前・タグのバッジ・ひとことを配置する。
+// 文字や写真の大きさは、枠の幅に合わせて自動的に拡大・縮小する
+async function ggDrawPostBlock(ctx, post, x, y, w, h) {
   const mood = ggState.moodMap[post.mood] || {};
   const tag = ggState.tagMap[post.meal_tag] || {};
-  const pad = big ? 36 : 26;
+  const scale = Math.max(0.75, Math.min(1.4, w / 520));
+  const pad = Math.round(26 * scale);
 
   ggRoundRectPath(ctx, x, y, w, h, 22);
   ctx.fillStyle = "#FFFFFF";
@@ -1295,7 +1297,7 @@ async function ggDrawPostBlock(ctx, post, x, y, w, h, big) {
   try {
     const img = await ggLoadImageEl(post.photo_url);
     const maxW = innerW;
-    const maxH = h * (big ? 0.66 : 0.6);
+    const maxH = h * 0.6;
     const ratio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
     const pw = img.naturalWidth * ratio;
     const ph = img.naturalHeight * ratio;
@@ -1310,25 +1312,25 @@ async function ggDrawPostBlock(ctx, post, x, y, w, h, big) {
     ctx.strokeStyle = "rgba(43,30,27,0.12)";
     ctx.lineWidth = 2;
     ctx.stroke();
-    cursorY += ph + (big ? 34 : 24);
+    cursorY += ph + Math.round(28 * scale);
   } catch (e) {
     cursorY += 10;
   }
 
   ctx.textAlign = "left";
   ctx.fillStyle = "#2B1E1B";
-  ctx.font = (big ? "700 40px" : "700 28px") + " 'Noto Sans JP', sans-serif";
+  ctx.font = "700 " + Math.round(28 * scale) + "px 'Noto Sans JP', sans-serif";
   ctx.fillText((mood.emoji ? mood.emoji + "  " : "") + post.name, innerX, cursorY);
-  cursorY += big ? 20 : 14;
+  cursorY += Math.round(16 * scale);
 
   // 「いつ食べた？」バッジ（薄いゴールドの丸ピル）
   const badgeText = (tag.emoji ? tag.emoji + " " : "") + (tag.label || "");
   if (badgeText.trim()) {
-    ctx.font = (big ? "700 22px" : "700 18px") + " 'Noto Sans JP', sans-serif";
-    const badgePad = big ? 16 : 12;
+    ctx.font = "700 " + Math.round(18 * scale) + "px 'Noto Sans JP', sans-serif";
+    const badgePad = Math.round(12 * scale);
     const badgeW = ctx.measureText(badgeText).width + badgePad * 2;
-    const badgeH = big ? 40 : 32;
-    cursorY += big ? 14 : 10;
+    const badgeH = Math.round(32 * scale);
+    cursorY += Math.round(10 * scale);
     ggRoundRectPath(ctx, innerX, cursorY, badgeW, badgeH, badgeH / 2);
     ctx.fillStyle = "#F4E9E2";
     ctx.fill();
@@ -1336,19 +1338,19 @@ async function ggDrawPostBlock(ctx, post, x, y, w, h, big) {
     ctx.textBaseline = "middle";
     ctx.fillText(badgeText, innerX + badgePad, cursorY + badgeH / 2 + 1);
     ctx.textBaseline = "alphabetic";
-    cursorY += badgeH + (big ? 18 : 14);
+    cursorY += badgeH + Math.round(14 * scale);
   }
 
   ctx.fillStyle = "#7A645C";
-  ctx.font = (big ? "400 22px" : "400 18px") + " 'Noto Sans JP', sans-serif";
+  ctx.font = "400 " + Math.round(18 * scale) + "px 'Noto Sans JP', sans-serif";
   const metaLine = ggFormatTime(post.created_at) + (post.location ? "　@" + post.location : "");
   ctx.fillText(metaLine, innerX, cursorY);
-  cursorY += big ? 34 : 26;
+  cursorY += Math.round(26 * scale);
 
   if (post.caption) {
     ctx.fillStyle = "#2B1E1B";
-    ctx.font = (big ? "400 26px" : "400 20px") + " 'Noto Sans JP', sans-serif";
-    const lineH = big ? 36 : 27;
+    ctx.font = "400 " + Math.round(20 * scale) + "px 'Noto Sans JP', sans-serif";
+    const lineH = Math.round(27 * scale);
     const remaining = Math.max(1, Math.floor((y + h - pad - cursorY) / lineH));
     ggWrapCanvasText(ctx, post.caption, innerW).slice(0, remaining).forEach((line) => {
       ctx.fillText(line, innerX, cursorY);
@@ -1357,8 +1359,59 @@ async function ggDrawPostBlock(ctx, post, x, y, w, h, big) {
   }
 }
 
-// 1ページに最大2件を並べて、旅の記録帳らしい密度に見せる。奇数件で最後の1件だけに
-// なるページは、余白が寂しくならないよう写真を大きく使った特別なレイアウトにする
+// 件数(1〜4件)に応じて、ページ内を無駄なく埋めるカードの配置を返す
+function ggGridRectsForCount(n, x, y, w, h, gap) {
+  if (n <= 1) return [[x, y, w, h]];
+  if (n === 2) {
+    const colW = (w - gap) / 2;
+    return [
+      [x, y, colW, h],
+      [x + colW + gap, y, colW, h],
+    ];
+  }
+  const colW = (w - gap) / 2;
+  const rowH = (h - gap) / 2;
+  if (n === 3) {
+    return [
+      [x, y, colW, rowH],
+      [x + colW + gap, y, colW, rowH],
+      [x, y + rowH + gap, w, rowH],
+    ];
+  }
+  return [
+    [x, y, colW, rowH],
+    [x + colW + gap, y, colW, rowH],
+    [x, y + rowH + gap, colW, rowH],
+    [x + colW + gap, y + rowH + gap, colW, rowH],
+  ];
+}
+
+// ページ上部の「バリ旅グラム」ヘッダーバーを描き、その下端のY座標を返す
+function ggDrawHeaderBar(ctx, margin) {
+  const barH = 90;
+  const bw = GG_PDF_PAGE_W - margin * 2;
+  ggRoundRectPath(ctx, margin, margin, bw, barH, 20);
+  const grad = ctx.createLinearGradient(margin, margin, margin + bw, margin);
+  grad.addColorStop(0, "#A6332E");
+  grad.addColorStop(1, "#7A2321");
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "700 36px 'Noto Sans JP', sans-serif";
+  ctx.fillText("バリ旅グラム", GG_PDF_PAGE_W / 2, margin + barH / 2 - 6);
+  ctx.font = "400 15px 'Noto Sans JP', sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,.85)";
+  ctx.fillText("BALI TOUR 2026 ｜ グルメスクラップ", GG_PDF_PAGE_W / 2, margin + barH / 2 + 22);
+  ctx.textBaseline = "alphabetic";
+
+  return margin + barH + 30;
+}
+
+// 1ページに最大4件を2列×2行で並べ、旅の記録帳らしい密度に見せる。
+// 件数が4未満のページも、余白が寂しくならないようカードを大きく広げて埋める
 async function ggDrawPostsPageCanvas(posts) {
   const canvas = document.createElement("canvas");
   canvas.width = GG_PDF_PAGE_W;
@@ -1368,22 +1421,17 @@ async function ggDrawPostsPageCanvas(posts) {
   ctx.fillRect(0, 0, GG_PDF_PAGE_W, GG_PDF_PAGE_H);
   ggDrawPageFrame(ctx);
 
-  const margin = 90;
-  const gap = 40;
-  const usableH = GG_PDF_PAGE_H - margin * 2;
+  const margin = 70;
+  const gap = 30;
+  const contentTop = ggDrawHeaderBar(ctx, margin);
   const usableW = GG_PDF_PAGE_W - margin * 2;
-  const isSingleBig = posts.length === 1;
-  const blockH = posts.length === 2 ? (usableH - gap) / 2 : usableH;
+  const usableH = GG_PDF_PAGE_H - margin - contentTop;
 
+  const rects = ggGridRectsForCount(posts.length, margin, contentTop, usableW, usableH, gap);
   for (let i = 0; i < posts.length; i++) {
-    const blockY = margin + i * (blockH + gap);
-    await ggDrawPostBlock(ctx, posts[i], margin, blockY, usableW, blockH, isSingleBig);
+    const [rx, ry, rw, rh] = rects[i];
+    await ggDrawPostBlock(ctx, posts[i], rx, ry, rw, rh);
   }
-
-  ctx.textAlign = "center";
-  ctx.fillStyle = "rgba(43,30,27,0.4)";
-  ctx.font = "400 18px 'Noto Sans JP', sans-serif";
-  ctx.fillText("BALI TOUR 2026 ｜ バリ旅ぐらむスクラップ", GG_PDF_PAGE_W / 2, GG_PDF_PAGE_H - 55);
 
   return canvas;
 }
@@ -1399,7 +1447,7 @@ async function ggBuildPdf(posts, title) {
   const titleCanvas = ggDrawTitleCanvas(title);
   doc.addImage(titleCanvas.toDataURL("image/jpeg", 0.9), "JPEG", 0, 0, pageW, pageH);
 
-  for (const pagePosts of ggChunk(posts, 2)) {
+  for (const pagePosts of ggChunk(posts, 4)) {
     doc.addPage();
     const canvas = await ggDrawPostsPageCanvas(pagePosts);
     doc.addImage(canvas.toDataURL("image/jpeg", 0.88), "JPEG", 0, 0, pageW, pageH);
