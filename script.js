@@ -787,8 +787,6 @@ function ggSelectMood(moodId) {
   document.querySelectorAll(".gg-mood-chip").forEach((btn) => {
     btn.classList.toggle("is-active", btn.dataset.moodId === moodId);
   });
-  const avatar = document.getElementById("gg-mood-avatar");
-  if (avatar && ggState.moodMap[moodId]) avatar.textContent = ggState.moodMap[moodId].emoji;
 }
 
 function ggSelectTag(tagId) {
@@ -874,15 +872,15 @@ async function ggHandlePhotoSelected(event) {
   ggUpdateBrightnessPreview();
 }
 
+// スライダーを動かすたびに、ポップアップ内の別プレビューではなく、
+// 上に表示されている写真のサムネイルそのものを直接明るく／暗くする
 function ggUpdateBrightnessPreview() {
   if (!ggState.photoPreviewCanvas) return;
   const slider = document.getElementById("gg-brightness-slider");
   const brightnessPercent = 50 + Number(slider.value);
   const adjusted = ggBrightnessCanvas(ggState.photoPreviewCanvas, brightnessPercent);
-  const previewEl = document.getElementById("gg-brightness-preview");
-  previewEl.width = adjusted.width;
-  previewEl.height = adjusted.height;
-  previewEl.getContext("2d").drawImage(adjusted, 0, 0);
+  const thumb = document.querySelector("#gg-photo-drop .gg-photo-drop-thumb");
+  if (thumb) thumb.src = adjusted.toDataURL("image/jpeg", 0.75);
 }
 
 function ggConfirmBrightness(apply) {
@@ -890,8 +888,10 @@ function ggConfirmBrightness(apply) {
     const slider = document.getElementById("gg-brightness-slider");
     const brightnessPercent = 50 + Number(slider.value);
     ggState.photoBaseCanvas = ggBrightnessCanvas(ggState.photoBaseCanvas, brightnessPercent);
+  } else if (!apply && ggState.photoPreviewCanvas) {
+    // 「そのままでOK」を選んだ場合は、プレビュー中に動かしたサムネイルを元の写真に戻す
     const thumb = document.querySelector("#gg-photo-drop .gg-photo-drop-thumb");
-    if (thumb) thumb.src = document.getElementById("gg-brightness-preview").toDataURL("image/jpeg", 0.7);
+    if (thumb) thumb.src = ggState.photoPreviewCanvas.toDataURL("image/jpeg", 0.7);
   }
   document.getElementById("gg-brightness-popup").classList.add("hidden");
 }

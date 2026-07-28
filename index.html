@@ -619,14 +619,6 @@
           <div class="gg-stories-row reveal" aria-hidden="true" id="gg-stories-row"></div>
 
           <section class="gg-composer reveal" id="gg-composer">
-            <div class="gg-composer-head">
-              <div class="gg-avatar gg-mood-avatar" id="gg-mood-avatar">😋</div>
-              <input class="gg-field-input" style="margin:0;" type="text" id="gg-name-input" placeholder="おなまえ" maxlength="20">
-            </div>
-
-            <p class="gg-mood-label">今の気持ちを選んでね（毎回のプロフ写真の代わりになります）</p>
-            <div class="gg-mood-row" id="gg-mood-row"></div>
-
             <div class="gg-coach-anchor" id="gg-photo-coach-anchor">
               <label class="gg-photo-drop" id="gg-photo-drop">
                 <div class="gg-photo-drop-icon" id="gg-photo-drop-icon">📷</div>
@@ -639,8 +631,7 @@
 
             <div class="gg-popup-card hidden" id="gg-brightness-popup">
               <p class="gg-popup-title">📸 写真、明るくしてみる？</p>
-              <p class="gg-popup-sub">スライダーを動かすだけで、パッと明るい写真になります</p>
-              <canvas class="gg-popup-preview" id="gg-brightness-preview"></canvas>
+              <p class="gg-popup-sub">スライダーを動かすだけで、上の写真がパッと明るくなります</p>
               <div class="gg-brightness-row">
                 <span>🌙</span>
                 <input class="gg-brightness-slider" type="range" min="0" max="100" value="50" id="gg-brightness-slider">
@@ -652,10 +643,16 @@
               </div>
             </div>
 
+            <input class="gg-field-input" type="text" id="gg-name-input" placeholder="おなまえ" maxlength="20">
+
+            <p class="gg-mood-label">今の気持ちを選んでね（毎回のプロフ写真の代わりになります）</p>
+            <div class="gg-mood-row" id="gg-mood-row"></div>
+
+            <p class="gg-tag-label">いつ食べた？</p>
+            <div class="gg-tag-row" id="gg-tag-row"></div>
+
             <input class="gg-field-input" type="text" id="gg-location-input" placeholder="どこで食べた？" maxlength="40">
             <textarea class="gg-field-textarea" id="gg-caption-input" placeholder="ひとこと" maxlength="200"></textarea>
-
-            <div class="gg-tag-row" id="gg-tag-row"></div>
 
             <p class="gg-composer-error hidden" id="gg-composer-error"></p>
             <button class="gg-btn-post" type="button" id="gg-submit-btn">投稿する</button>
