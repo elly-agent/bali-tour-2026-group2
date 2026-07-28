@@ -299,7 +299,7 @@ async function runOpeningSequence(data) {
   openingEls.arrivalSub.textContent = opening.arrivalSubGreeting;
   openingEls.arrival.classList.remove("hidden");
   openingEls.shootingStars.classList.add("is-active");
-  await sleep(2800);
+  await sleep(2000);
   if (state.openingSkipped) return finishOpeningToTitle(opening);
 
   // --- タイトルロゴ表示 ---
