@@ -1459,10 +1459,23 @@ async function ggBuildPdf(posts, title) {
 // ブラウザ純正のPDFビューアには「戻る」ボタンを追加できないため、
 // 開いたタブの中に「← 戻る」ボタン付きの簡単な枠を用意し、その中にPDFを表示する。
 // 「戻る」はこのタブ自体を閉じる動作にすることで、初めての人でも迷わず操作できるようにする
+function ggIsMobileUA() {
+  return /iPhone|iPad|iPod|Android|Mobi/i.test(navigator.userAgent);
+}
+
 function ggOpenPdfPreview(win, blobUrl, filename) {
+  // スマホでは、独自の枠(iframe)でPDFを埋め込むと表示が崩れる・画像が出ないことがあるため、
+  // 端末が持っている標準のPDF表示にそのまま任せる（この方法は動作確認済み）
+  if (ggIsMobileUA()) {
+    win.location = blobUrl;
+    return;
+  }
+
   const escapedTitle = ggEscapeHtml(filename);
   const html =
-    "<!doctype html><html lang='ja'><head><meta charset='utf-8'><title>" + escapedTitle + "</title>" +
+    "<!doctype html><html lang='ja'><head><meta charset='utf-8'>" +
+    "<meta name='viewport' content='width=device-width, initial-scale=1'>" +
+    "<title>" + escapedTitle + "</title>" +
     "<style>" +
     "html,body{margin:0;padding:0;height:100%;background:#2B211D;font-family:-apple-system,'Hiragino Sans','Yu Gothic','Segoe UI',sans-serif;}" +
     ".gg-pdf-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:linear-gradient(135deg,#C74B3F,#7A2321);flex-wrap:wrap;}" +
