@@ -1180,10 +1180,68 @@ function ggDrawTitleCanvas(title) {
   return canvas;
 }
 
-async function ggDrawPostCanvas(post) {
+function ggChunk(arr, size) {
+  const out = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
+}
+
+// 1件分を、与えられた枠(x,y,w,h)の中に収まるように描く（写真は枠の高さの半分程度まで）
+async function ggDrawPostBlock(ctx, post, x, y, w, h) {
   const mood = ggState.moodMap[post.mood] || {};
   const tag = ggState.tagMap[post.meal_tag] || {};
-  const margin = 80;
+  let cursorY = y;
+
+  try {
+    const img = await ggLoadImageEl(post.photo_url);
+    const maxW = w;
+    const maxH = h * 0.55;
+    const ratio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+    const pw = img.naturalWidth * ratio;
+    const ph = img.naturalHeight * ratio;
+    const px = x + (w - pw) / 2;
+    const r = 18;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(px + r, cursorY);
+    ctx.arcTo(px + pw, cursorY, px + pw, cursorY + ph, r);
+    ctx.arcTo(px + pw, cursorY + ph, px, cursorY + ph, r);
+    ctx.arcTo(px, cursorY + ph, px, cursorY, r);
+    ctx.arcTo(px, cursorY, px + pw, cursorY, r);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(img, px, cursorY, pw, ph);
+    ctx.restore();
+    cursorY += ph + 26;
+  } catch (e) {
+    cursorY += 10;
+  }
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#2B1E1B";
+  ctx.font = "700 30px 'Noto Sans JP', sans-serif";
+  ctx.fillText((mood.emoji ? mood.emoji + "  " : "") + post.name, x, cursorY);
+  cursorY += 34;
+
+  ctx.fillStyle = "#7A645C";
+  ctx.font = "400 20px 'Noto Sans JP', sans-serif";
+  const metaLine = ggFormatTime(post.created_at) + "　" + (tag.emoji ? tag.emoji + tag.label : "") + (post.location ? "　@" + post.location : "");
+  ctx.fillText(metaLine, x, cursorY);
+  cursorY += 32;
+
+  if (post.caption) {
+    ctx.fillStyle = "#2B1E1B";
+    ctx.font = "400 22px 'Noto Sans JP', sans-serif";
+    const remaining = Math.max(1, Math.floor((y + h - cursorY) / 30));
+    ggWrapCanvasText(ctx, post.caption, w).slice(0, remaining).forEach((line) => {
+      ctx.fillText(line, x, cursorY);
+      cursorY += 30;
+    });
+  }
+}
+
+// 1ページに最大2件を並べて、旅の記録帳らしい密度に見せる
+async function ggDrawPostsPageCanvas(posts) {
   const canvas = document.createElement("canvas");
   canvas.width = GG_PDF_PAGE_W;
   canvas.height = GG_PDF_PAGE_H;
@@ -1191,52 +1249,31 @@ async function ggDrawPostCanvas(post) {
   ctx.fillStyle = "#FFF8F3";
   ctx.fillRect(0, 0, GG_PDF_PAGE_W, GG_PDF_PAGE_H);
 
-  let cursorY = margin;
-  try {
-    const img = await ggLoadImageEl(post.photo_url);
-    const maxW = GG_PDF_PAGE_W - margin * 2;
-    const maxH = GG_PDF_PAGE_H * 0.5;
-    const ratio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
-    const w = img.naturalWidth * ratio;
-    const h = img.naturalHeight * ratio;
-    const x = (GG_PDF_PAGE_W - w) / 2;
-    const r = 24;
-    ctx.save();
+  const margin = 70;
+  const gap = 50;
+  const usableH = GG_PDF_PAGE_H - margin * 2;
+  const blockH = posts.length === 2 ? (usableH - gap) / 2 : usableH;
+  const blockW = GG_PDF_PAGE_W - margin * 2;
+
+  for (let i = 0; i < posts.length; i++) {
+    const blockY = margin + i * (blockH + gap);
+    await ggDrawPostBlock(ctx, posts[i], margin, blockY, blockW, blockH);
+  }
+
+  if (posts.length === 2) {
+    ctx.strokeStyle = "rgba(43,30,27,0.15)";
+    ctx.lineWidth = 2;
+    const lineY = margin + blockH + gap / 2;
     ctx.beginPath();
-    ctx.moveTo(x + r, cursorY);
-    ctx.arcTo(x + w, cursorY, x + w, cursorY + h, r);
-    ctx.arcTo(x + w, cursorY + h, x, cursorY + h, r);
-    ctx.arcTo(x, cursorY + h, x, cursorY, r);
-    ctx.arcTo(x, cursorY, x + w, cursorY, r);
-    ctx.closePath();
-    ctx.clip();
-    ctx.drawImage(img, x, cursorY, w, h);
-    ctx.restore();
-    cursorY += h + 50;
-  } catch (e) {
-    cursorY += 20;
+    ctx.moveTo(margin, lineY);
+    ctx.lineTo(GG_PDF_PAGE_W - margin, lineY);
+    ctx.stroke();
   }
 
-  ctx.textAlign = "left";
-  ctx.fillStyle = "#2B1E1B";
-  ctx.font = "700 42px 'Noto Sans JP', sans-serif";
-  ctx.fillText((mood.emoji ? mood.emoji + "  " : "") + post.name, margin, cursorY);
-  cursorY += 50;
-
-  ctx.fillStyle = "#7A645C";
-  ctx.font = "400 26px 'Noto Sans JP', sans-serif";
-  const metaLine = ggFormatTime(post.created_at) + "　" + (tag.emoji ? tag.emoji + tag.label : "") + (post.location ? "　@" + post.location : "");
-  ctx.fillText(metaLine, margin, cursorY);
-  cursorY += 50;
-
-  if (post.caption) {
-    ctx.fillStyle = "#2B1E1B";
-    ctx.font = "400 32px 'Noto Sans JP', sans-serif";
-    ggWrapCanvasText(ctx, post.caption, GG_PDF_PAGE_W - margin * 2).forEach((line) => {
-      ctx.fillText(line, margin, cursorY);
-      cursorY += 44;
-    });
-  }
+  ctx.textAlign = "center";
+  ctx.fillStyle = "rgba(43,30,27,0.35)";
+  ctx.font = "400 18px 'Noto Sans JP', sans-serif";
+  ctx.fillText("BALI TOUR 2026", GG_PDF_PAGE_W / 2, GG_PDF_PAGE_H - 30);
 
   return canvas;
 }
@@ -1252,9 +1289,9 @@ async function ggBuildPdf(posts, title) {
   const titleCanvas = ggDrawTitleCanvas(title);
   doc.addImage(titleCanvas.toDataURL("image/jpeg", 0.9), "JPEG", 0, 0, pageW, pageH);
 
-  for (const post of posts) {
+  for (const pagePosts of ggChunk(posts, 2)) {
     doc.addPage();
-    const canvas = await ggDrawPostCanvas(post);
+    const canvas = await ggDrawPostsPageCanvas(pagePosts);
     doc.addImage(canvas.toDataURL("image/jpeg", 0.88), "JPEG", 0, 0, pageW, pageH);
   }
 
