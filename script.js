@@ -1509,7 +1509,7 @@ function ggOpenPdfPreview(win, blobUrl, filename) {
   // PDF側の表示状態に関わらず、この画面に確実に戻れるようにしている
   const contentHtml = isMobile
     ? "<div class='gg-pdf-mobile-open'>" +
-        "<p class='gg-pdf-mobile-msg'>下のボタンを押すと、別のタブでPDFが開きます。<br>見終わったら、このタブに戻ってきて「← バリ旅グラムに戻る」を押してください。</p>" +
+        "<p class='gg-pdf-mobile-msg'>下のボタンを押すとPDFが開きます。<br>開いたら、画面上部のシェアボタン（四角に上矢印のマーク）をタップし、出てきたメニューの中から「保存」を選んで保存してください。</p>" +
         "<button id='gg-pdf-mobile-open-btn' type='button'>📄 PDFを開く</button>" +
       "</div>"
     : "<iframe src='" + blobUrl + "'></iframe>";
