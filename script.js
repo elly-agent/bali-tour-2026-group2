@@ -1472,14 +1472,20 @@ function ggIsMobileUA() {
 }
 
 function ggOpenPdfPreview(win, blobUrl, filename) {
-  // スマホでは、独自の枠(iframe)でPDFを埋め込むと表示が崩れる・画像が出ないことがあるため、
-  // 端末が持っている標準のPDF表示にそのまま任せる（この方法は動作確認済み）
-  if (ggIsMobileUA()) {
-    win.location = blobUrl;
-    return;
-  }
-
+  const isMobile = ggIsMobileUA();
   const escapedTitle = ggEscapeHtml(filename);
+
+  // スマホでは、独自の枠(iframe)でPDFをそのまま埋め込むと表示が崩れる・画像が出ないことが
+  // あったため、埋め込み表示はせず、タップすると端末標準のPDF表示に切り替わる大きな
+  // ボタンを置く。「戻る」バーはそのボタンとは別の要素として常に表示されるので、
+  // PDF側の表示状態に関わらず、この画面に確実に戻れるようにしている
+  const contentHtml = isMobile
+    ? "<div class='gg-pdf-mobile-open'>" +
+        "<p class='gg-pdf-mobile-msg'>下のボタンを押すとPDFが開きます</p>" +
+        "<button id='gg-pdf-mobile-open-btn' type='button'>📄 PDFを開く</button>" +
+      "</div>"
+    : "<iframe src='" + blobUrl + "'></iframe>";
+
   const html =
     "<!doctype html><html lang='ja'><head><meta charset='utf-8'>" +
     "<meta name='viewport' content='width=device-width, initial-scale=1'>" +
@@ -1491,14 +1497,23 @@ function ggOpenPdfPreview(win, blobUrl, filename) {
     ".gg-pdf-bar a{color:#fff;font-size:.82rem;text-decoration:underline;}" +
     ".gg-pdf-bar span{color:#fff;font-size:.8rem;opacity:.85;}" +
     "iframe{width:100%;height:calc(100% - 54px);border:none;display:block;background:#fff;}" +
+    ".gg-pdf-mobile-open{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;height:calc(100% - 54px);padding:24px;text-align:center;}" +
+    ".gg-pdf-mobile-msg{color:#fff;font-size:1rem;margin:0;}" +
+    "#gg-pdf-mobile-open-btn{border:none;border-radius:16px;padding:18px 32px;font-weight:700;font-size:1.1rem;background:linear-gradient(135deg,#D4A24C,#A8792E);color:#fff;cursor:pointer;}" +
     "</style></head><body>" +
     "<div class='gg-pdf-bar'>" +
     "<button id='gg-pdf-back' type='button'>← バリ旅グラムに戻る</button>" +
     "<span>保存が終わったら押してください</span>" +
     "<a id='gg-pdf-dl' download='" + escapedTitle + "'>うまく表示されない場合はこちら（ダウンロード）</a>" +
     "</div>" +
-    "<iframe src='" + blobUrl + "'></iframe>" +
-    "<script>document.getElementById('gg-pdf-back').addEventListener('click', function(){ window.close(); });</" + "script>" +
+    contentHtml +
+    "<script>" +
+    "document.getElementById('gg-pdf-back').addEventListener('click', function(){ window.close(); });" +
+    (isMobile
+      ? "var openBtn=document.getElementById('gg-pdf-mobile-open-btn');" +
+        "if(openBtn){ openBtn.addEventListener('click', function(){ window.location.href='" + blobUrl + "'; }); }"
+      : "") +
+    "</" + "script>" +
     "</body></html>";
 
   win.document.open();
