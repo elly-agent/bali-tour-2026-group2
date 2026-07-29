@@ -1509,7 +1509,7 @@ function ggOpenPdfPreview(win, blobUrl, filename) {
   // PDF側の表示状態に関わらず、この画面に確実に戻れるようにしている
   const contentHtml = isMobile
     ? "<div class='gg-pdf-mobile-open'>" +
-        "<p class='gg-pdf-mobile-msg'>下のボタンを押すとPDFが開きます</p>" +
+        "<p class='gg-pdf-mobile-msg'>下のボタンを押すと、別のタブでPDFが開きます。<br>見終わったら、このタブに戻ってきて「← バリ旅グラムに戻る」を押してください。</p>" +
         "<button id='gg-pdf-mobile-open-btn' type='button'>📄 PDFを開く</button>" +
       "</div>"
     : "<iframe src='" + blobUrl + "'></iframe>";
@@ -1539,7 +1539,7 @@ function ggOpenPdfPreview(win, blobUrl, filename) {
     "document.getElementById('gg-pdf-back').addEventListener('click', function(){ window.close(); });" +
     (isMobile
       ? "var openBtn=document.getElementById('gg-pdf-mobile-open-btn');" +
-        "if(openBtn){ openBtn.addEventListener('click', function(){ window.location.href='" + blobUrl + "'; }); }"
+        "if(openBtn){ openBtn.addEventListener('click', function(){ window.open('" + blobUrl + "', '_blank'); }); }"
       : "") +
     "</" + "script>" +
     "</body></html>";
