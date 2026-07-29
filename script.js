@@ -1110,6 +1110,18 @@ function goToGourmetGram() {
 }
 
 /* --- 旅の思い出をPDFで保存する（画像として一旦描画し、日本語もそのまま綺麗に出せるようにする） --- */
+// 通信環境が悪い時などにいつまでも待ち続けてしまわないよう、
+// 「保存する」ボタンが永久に「作成中…」のまま固まらないための共通タイムアウト処理
+function ggWithTimeout(promise, ms, message) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message || "timeout")), ms);
+    promise.then(
+      (value) => { clearTimeout(timer); resolve(value); },
+      (err) => { clearTimeout(timer); reject(err); }
+    );
+  });
+}
+
 function ggLoadScript(src) {
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
@@ -1127,17 +1139,28 @@ let ggPdfLibLoadPromise = null;
 function ggLoadPdfLib() {
   if (window.jspdf && window.jspdf.jsPDF) return Promise.resolve();
   if (ggPdfLibLoadPromise) return ggPdfLibLoadPromise;
-  ggPdfLibLoadPromise = ggLoadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+  ggPdfLibLoadPromise = ggWithTimeout(
+    ggLoadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"),
+    10000,
+    "PDFライブラリの読み込みがタイムアウトしました"
+  ).catch((err) => {
+    ggPdfLibLoadPromise = null; // 次回また読み込みを試せるようにする
+    throw err;
+  });
   return ggPdfLibLoadPromise;
 }
 
 function ggLoadImageEl(src) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = src;
-  });
+  return ggWithTimeout(
+    new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    }),
+    10000,
+    "画像の読み込みがタイムアウトしました"
+  );
 }
 
 function ggWrapCanvasText(ctx, text, maxWidth) {
@@ -1446,7 +1469,12 @@ async function ggDrawPostsPageCanvas(posts) {
 
 async function ggBuildPdf(posts, title) {
   await ggLoadPdfLib();
-  if (document.fonts && document.fonts.ready) await document.fonts.ready;
+  // document.fonts.ready は、このページが読み込んでいる大量のGoogle Fonts（未使用の
+  // 文字範囲ぶんも含む）すべての読み込み完了を待ってしまい、環境によっては
+  // いつまでも終わらないことがあるため、最大3秒で必ず先へ進むようにする
+  if (document.fonts && document.fonts.ready) {
+    await Promise.race([document.fonts.ready, new Promise((resolve) => setTimeout(resolve, 3000))]);
+  }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth();
