@@ -1743,6 +1743,14 @@ function renderHotels(data) {
 
     card.appendChild(imageWrap);
     card.appendChild(body);
+
+    if (hotel.extraPhoto) {
+      const extraWrap = el("div", "h-extra-photo");
+      extraWrap.appendChild(makeImg(hotel.extraPhoto.image, hotel.extraPhoto.caption));
+      extraWrap.appendChild(el("p", "h-extra-caption", hotel.extraPhoto.caption));
+      card.appendChild(extraWrap);
+    }
+
     grid.appendChild(card);
   });
 }

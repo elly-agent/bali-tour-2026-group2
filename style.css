@@ -1199,6 +1199,9 @@ ul { list-style: none; margin: 0; padding: 0; }
   display: inline-block; padding: 8px 20px; border-radius: 999px; font-size: .8rem;
   background: var(--color-emerald); color: var(--color-white);
 }
+.hotel-card .h-extra-photo { padding: 0 var(--space-m) var(--space-m); }
+.hotel-card .h-extra-photo img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: var(--radius-m); display: block; margin-bottom: 6px; }
+.hotel-card .h-extra-caption { font-size: .78rem; color: var(--color-ink-soft); text-align: center; margin: 0; }
 
 /* --- グルメ（Ch12） --- */
 .gourmet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-m); }
