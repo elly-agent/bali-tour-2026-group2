@@ -1,0 +1,4 @@
+.git
+.wrangler
+.netlify
+node_modules
