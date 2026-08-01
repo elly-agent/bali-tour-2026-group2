@@ -455,7 +455,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 .shortcut-pill {
   display: flex; align-items: center; gap: 6px;
   padding: 8px 16px; border-radius: 999px; border: none; cursor: pointer;
-  color: var(--color-white); font-size: .78rem; font-weight: 600; letter-spacing: .02em;
+  color: var(--color-white); font-size: .92rem; font-weight: 600; letter-spacing: .02em;
   box-shadow: 0 4px 12px rgba(0,0,0,.18);
   transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
   animation: shortcut-float 2.6s ease-in-out infinite;
@@ -1731,7 +1731,7 @@ ul { list-style: none; margin: 0; padding: 0; }
   .topbar-right { gap: 2px; }
   .icon-btn { width: 38px; height: 38px; font-size: .9rem; }
   .shortcut-bar { padding: 6px var(--space-s); gap: 6px; }
-  .shortcut-pill { padding: 7px 12px; font-size: .72rem; }
+  .shortcut-pill { padding: 7px 12px; font-size: .84rem; }
   .slides-viewport {
     margin-bottom: calc(66px + env(safe-area-inset-bottom, 0px));
     height: calc(100vh - var(--header-h, 104px) - 69px - env(safe-area-inset-bottom, 0px));
