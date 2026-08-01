@@ -2662,6 +2662,7 @@ function setupNavigationEvents() {
   document.getElementById("btn-home").addEventListener("click", goHome);
   document.getElementById("btn-home-2").addEventListener("click", goHome);
   document.getElementById("btn-menu").addEventListener("click", openChapterMenu);
+  document.getElementById("btn-menu-shortcut").addEventListener("click", openChapterMenu);
   document.getElementById("btn-close-menu").addEventListener("click", closeChapterMenu);
   document.getElementById("btn-bgm").addEventListener("click", () => toggleBgmMenu("btn-bgm"));
   document.getElementById("btn-bgm-shortcut").addEventListener("click", () => toggleBgmMenu("btn-bgm-shortcut"));

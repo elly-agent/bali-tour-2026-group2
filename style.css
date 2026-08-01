@@ -468,6 +468,8 @@ ul { list-style: none; margin: 0; padding: 0; }
 .shortcut-pill--weather { background: var(--color-emerald); animation-delay: .7s; }
 .shortcut-pill--gourmet-gram { background: #A6332E; animation-delay: 1.05s; }
 .shortcut-pill--gourmet-gram:hover { background: #C74B3F; }
+.shortcut-pill--menu { background: var(--color-turquoise); animation-delay: 1.4s; }
+.shortcut-pill--menu:hover { background: var(--color-turquoise-deep); }
 
 @keyframes shortcut-float {
   0%, 100% { transform: translateY(0); }
