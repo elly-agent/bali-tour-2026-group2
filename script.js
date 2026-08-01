@@ -1954,6 +1954,10 @@ function renderGallery(data) {
 function renderSpots(data) {
   const grid = document.getElementById("spots-grid");
   data.spots.forEach((spot) => {
+    if (spot.divider) {
+      grid.appendChild(el("div", "spots-divider reveal", spot.divider));
+      return;
+    }
     const card = el("div", "spot-card reveal");
     card.appendChild(makeImg(spot.image, spot.name));
     const body = el("div", "spot-body");
